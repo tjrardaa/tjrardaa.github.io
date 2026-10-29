@@ -2,97 +2,176 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Arda Nigiz – Portfolio</title>
 <meta name="description" content="Arda Nigiz, étudiant en Bachelor Cybersécurité à l'ESGI Paris, à la recherche d'une alternance dès janvier 2027.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2312141f'/%3E%3Ctext x='32' y='42' font-size='28' font-family='monospace' font-weight='700' text-anchor='middle' fill='%23ffd23f'%3EAN%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="nav" id="nav">
-  <nav aria-label="Navigation">
-    <a href="#accueil" class="on">Accueil</a>
-    <a href="#parcours">Parcours</a>
-    <a href="#projets">Projets</a>
-    <a href="#competences">Compétences</a>
-    <a href="#programme">Programme</a>
-    <a href="#contact">Contact</a>
+
+<header class="top">
+  <a class="brand" href="#accueil" data-go="0">Arda Nigiz</a>
+  <nav class="links" aria-label="Navigation">
+    <a href="#parcours" data-go="1">Parcours</a>
+    <a href="#projets" data-go="2">Projets</a>
+    <a href="#competences" data-go="3">Compétences</a>
+    <a href="#programme" data-go="4">Programme</a>
+    <a href="#contact" data-go="5">Contact</a>
   </nav>
-  <div class="clocks" aria-hidden="true"><span>PAR <b id="c1">--:--</b></span><span class="arr">→</span><span>GVA <b id="c2">--:--</b></span></div>
-  <a class="mail" href="mailto:bryanigizarda@gmail.com">bryanigizarda@gmail.com</a>
 </header>
 
-<section class="hero" id="accueil">
-  <canvas id="scene" aria-hidden="true"></canvas>
-  <div class="hero-txt">
-    <p class="kicker">Portfolio · 2026</p>
-    <h1>Arda Nigiz.<br>Monteur vidéo,<br><mark>futur pentester.</mark></h1>
-    <p class="lead">Étudiant en Bachelor Cybersécurité à l'ESGI Paris. Je cherche une alternance dès <b>janvier 2027</b>.</p>
-    <p class="hint" id="hint">Clique sur les anneaux.</p>
-  </div>
-  <footer class="links">
-    <a href="CV_Arda_Nigiz.pdf" download>CV (PDF)</a>
-    <a href="https://github.com/tjrardaa" target="_blank" rel="noopener">GitHub</a>
-    <a href="mailto:bryanigizarda@gmail.com">E-mail</a>
-    <span class="tc" id="tc" aria-hidden="true">TC 00:00:00:00</span>
-  </footer>
-</section>
+<main id="track" class="track" tabindex="-1">
 
-<main>
-<section id="parcours" class="sec">
-  <h2><span>01</span> Parcours</h2>
-  <p class="sub">Comme sur une timeline de montage : chaque plan a sa durée.</p>
-  <ol class="tl">
-    <li class="reveal"><time>2023</time><div><b>Bac professionnel microtechniques</b><p>Un premier pas dans la technique et l'électronique.</p></div></li>
-    <li class="reveal"><time>2023 – 2025</time><div><b>BUT MMI, développement web</b><p>IUT de Cergy-Pontoise. 2 années validées : web, bases de données, réseaux.</p></div></li>
-    <li class="reveal"><time>Janv. 2025 →</time><div><b>Monteur vidéo, auto-entrepreneur</b><p>Montage et livraison de vidéos YouTube et TikTok. Relation client, délais, autonomie.</p></div></li>
-    <li class="reveal now"><time>Janv. 2027</time><div><b>Bachelor Cybersécurité, ESGI Paris</b><p>3<sup>e</sup> année en alternance : 3 semaines en entreprise, 1 semaine à l'école.</p></div></li>
-  </ol>
-</section>
+  <section class="panel hero" id="accueil" data-label="Accueil">
+    <canvas id="scene" aria-hidden="true"></canvas>
+    <div class="hero-txt">
+      <p class="kicker">Portfolio · Alternance janvier 2027</p>
+      <h1><span class="l1">Arda Nigiz.</span><span class="l2">Monteur vidéo,</span><span class="pill">futur <b>pentester.</b></span></h1>
+      <p class="lead">Étudiant en Bachelor Cybersécurité à l'ESGI Paris. Je cherche une alternance en cybersécurité, réseaux ou systèmes.</p>
+      <p class="hint3d" id="hint3d">Clique sur le cadenas.</p>
+    </div>
+    <div class="scrollhint" id="scrollhint" aria-hidden="true"><span>Fais défiler</span><i></i></div>
+  </section>
 
-<section id="projets" class="sec">
-  <h2><span>02</span> Projets</h2>
-  <div class="cards">
-    <article class="card reveal"><span class="tag">C# · Unity</span><h3>Jeu de plateforme 2D</h3><p>Projet de groupe à deux. Déplacements du joueur, ennemis, gestion des scènes et du son, événements par ScriptableObjects.</p></article>
-    <article class="card reveal"><span class="tag">PHP · MySQL</span><h3>Site dynamique</h3><p>Projet de groupe à quatre (BUT MMI). J'ai réalisé le back-office : articles, auteurs, messages, connexion.</p></article>
-    <article class="card reveal"><span class="tag">HTML · CSS · JS</span><h3>Ce portfolio</h3><p>Une scène 3D en WebGL, sans framework, pensée pour rester légère sur tous les écrans.</p></article>
-    <article class="card reveal ghost"><span class="tag">Bientôt</span><h3>Premiers write-ups</h3><p>Mes comptes-rendus de challenges (TryHackMe, Root-Me) arriveront ici, un par un.</p></article>
-  </div>
-</section>
+  <section class="panel" id="parcours" data-label="Parcours">
+    <h2><span>01</span>Parcours</h2>
+    <p class="sub">Comme sur une timeline de montage : chaque plan a sa durée.</p>
+    <ol class="tl">
+      <li><time>2023</time><b>Bac professionnel microtechniques</b><p>Un premier pas dans la technique et l'électronique.</p></li>
+      <li><time>2023 – 2025</time><b>BUT MMI, développement web</b><p>IUT de Cergy-Pontoise. 2 années validées : web, bases de données, réseaux.</p></li>
+      <li><time>Janv. 2025 →</time><b>Monteur vidéo, auto-entrepreneur</b><p>Montage et livraison de vidéos YouTube et TikTok. Relation client, délais, autonomie.</p></li>
+      <li class="now"><time>Janv. 2027</time><b>Bachelor Cybersécurité, ESGI Paris</b><p>3<sup>e</sup> année en alternance : 3 semaines en entreprise, 1 semaine à l'école.</p></li>
+    </ol>
+  </section>
 
-<section id="competences" class="sec">
-  <h2><span>03</span> Compétences</h2>
-  <div class="skills">
-    <div class="reveal"><h3>Développement</h3><ul><li>HTML</li><li>CSS</li><li>JavaScript</li><li>PHP</li><li>Python</li><li>C#</li><li>Lua</li><li>SQL (MySQL)</li></ul></div>
-    <div class="reveal"><h3>Systèmes &amp; réseaux</h3><ul><li>Linux (bases)</li><li>VirtualBox</li><li>Docker</li><li>Modèle OSI</li><li>TCP/IP</li><li>Packet Tracer</li><li>SSH</li></ul></div>
-    <div class="reveal"><h3>Outils</h3><ul><li>Git / GitHub</li><li>VS Code</li><li>PuTTY</li><li>Premiere Pro</li><li>After Effects</li><li>Photoshop</li></ul></div>
-    <div class="reveal"><h3>Langues</h3><ul><li>Français</li><li>Turc (langue maternelle)</li><li>Anglais B2</li></ul></div>
-  </div>
-</section>
+  <section class="panel" id="projets" data-label="Projets">
+    <h2><span>02</span>Projets</h2>
+    <p class="sub">Clique sur une carte pour lire le compte rendu.</p>
+    <div class="cardrow">
+      <button class="pcard t-cobalt" data-r="r-unity" type="button"><span class="art"><b>C#</b></span><span class="meta"><i class="tag">C# · Unity</i><strong>Jeu de plateforme 2D</strong><em>Lire le compte rendu →</em></span></button>
+      <button class="pcard t-coral" data-r="r-php" type="button"><span class="art"><b>PHP</b></span><span class="meta"><i class="tag">PHP · MySQL</i><strong>Site dynamique</strong><em>Lire le compte rendu →</em></span></button>
+      <button class="pcard t-ink" data-r="r-site" type="button"><span class="art"><b>&lt;/&gt;</b></span><span class="meta"><i class="tag">HTML · CSS · JS</i><strong>Ce portfolio</strong><em>Lire le compte rendu →</em></span></button>
+      <button class="pcard t-ghost" data-r="r-write" type="button"><span class="art"><b>?</b></span><span class="meta"><i class="tag">Bientôt</i><strong>Premiers write-ups</strong><em>Lire le plan →</em></span></button>
+    </div>
+  </section>
 
-<section id="programme" class="sec">
-  <h2><span>04</span> Mon programme d'ici janvier</h2>
-  <p class="sub">La cybersécurité, ça se pratique. Voici où j'en suis, mis à jour au fil de l'eau.</p>
-  <ul class="log">
-    <li class="reveal" data-s="doing"><i></i>OverTheWire Bandit : niveaux 0 à 10 <em>en cours</em></li>
-    <li class="reveal" data-s="todo"><i></i>TryHackMe : Pre Security (gratuit) <em>à faire</em></li>
-    <li class="reveal" data-s="todo"><i></i>Root-Me : premiers challenges web <em>à faire</em></li>
-    <li class="reveal" data-s="todo"><i></i>Home lab : Kali Linux dans VirtualBox <em>à faire</em></li>
-    <li class="reveal" data-s="todo"><i></i>Un write-up par semaine sur GitHub <em>à faire</em></li>
-  </ul>
-</section>
+  <section class="panel" id="competences" data-label="Compétences">
+    <h2><span>03</span>Compétences</h2>
+    <p class="sub">Passe la souris sur une compétence (ou touche-la) : quelqu'un jette un œil.</p>
+    <div class="skills" id="skills"></div>
+  </section>
 
-<section id="contact" class="sec contact">
-  <h2><span>05</span> Contact</h2>
-  <p class="big">Une alternance à proposer, en cybersécurité, réseaux ou systèmes, en Île-de-France ?</p>
-  <a class="cta" href="mailto:bryanigizarda@gmail.com">bryanigizarda@gmail.com</a>
-  <p class="row"><a href="CV_Arda_Nigiz.pdf" download>Télécharger mon CV</a><a href="https://github.com/tjrardaa" target="_blank" rel="noopener">github.com/tjrardaa</a></p>
-</section>
+  <section class="panel" id="programme" data-label="Programme">
+    <h2><span>04</span>Mon programme d'ici janvier</h2>
+    <p class="sub">La cybersécurité, ça se pratique. Voici où j'en suis, mis à jour au fil de l'eau.</p>
+    <ul class="log">
+      <li data-s="doing"><i></i>OverTheWire Bandit : niveaux 0 à 10 <em>en cours</em></li>
+      <li data-s="todo"><i></i>TryHackMe : Pre Security (gratuit) <em>à faire</em></li>
+      <li data-s="todo"><i></i>Root-Me : premiers challenges web <em>à faire</em></li>
+      <li data-s="todo"><i></i>Home lab : Kali Linux dans VirtualBox <em>à faire</em></li>
+      <li data-s="todo"><i></i>Un write-up par semaine sur GitHub <em>à faire</em></li>
+    </ul>
+  </section>
+
+  <section class="panel contact" id="contact" data-label="Contact">
+    <h2><span>05</span>Contact</h2>
+    <p class="big">Une alternance à proposer, en cybersécurité, réseaux ou systèmes, en Île-de-France ?</p>
+    <a class="cta" href="mailto:bryanigizarda@gmail.com">bryanigizarda@gmail.com</a>
+    <p class="row"><a href="CV_Arda_Nigiz.pdf" download>Télécharger mon CV</a><a href="https://github.com/tjrardaa" target="_blank" rel="noopener">github.com/tjrardaa</a></p>
+    <p class="fine">Créteil · fait main en HTML, CSS et JavaScript</p>
+  </section>
 </main>
-<footer class="end">Arda Nigiz · Créteil · fait main en HTML, CSS et JavaScript</footer>
-<div id="toast" role="status" aria-live="polite"></div>
+
+<footer class="dock" id="dock">
+  <button class="step" id="prev" type="button" aria-label="Section précédente">‹</button>
+  <div class="rail" id="rail"><div class="fill" id="fill"></div><div class="head" id="head"></div></div>
+  <span class="tc" id="tc" aria-hidden="true">00:00:00:00</span>
+  <button class="step" id="next" type="button" aria-label="Section suivante">›</button>
+</footer>
+
+<div id="peek" aria-hidden="true">
+  <div class="bub"><b id="pname"></b><span id="pnote"></span></div>
+  <div class="tile"><span id="pmono"></span><img id="pimg" alt="" hidden></div>
+</div>
+
+<div id="stage" hidden>
+  <div class="veil"></div>
+  <div class="fc" id="fc"><div class="face pcard front"></div><div class="face back"><span>AN</span></div></div>
+  <aside class="report" id="report" role="dialog" aria-modal="true" aria-label="Compte rendu du projet"></aside>
+</div>
+
+<template id="r-unity">
+  <h3>Jeu de plateforme 2D</h3>
+  <p class="meta">C# · Unity 6 · BUT MMI · projet de groupe à deux</p>
+  <h4>Le projet</h4>
+  <p>Un jeu de plateforme 2D réalisé en cours avec Unity 6 et C#, à deux. Le joueur traverse des niveaux en évitant des pièges et des ennemis.</p>
+  <h4>Ce qu'il y a dedans</h4>
+  <ul>
+    <li>Déplacements du joueur : double saut, « coyote time » et saut mémorisé pour un contrôle agréable.</li>
+    <li>Points de vie, contacts et dégâts avec les ennemis.</li>
+    <li>Ennemis aux comportements différents : patrouille, charge, « RockHead ».</li>
+    <li>Plateformes qui tombent, pendules et autres éléments de décor animés.</li>
+    <li>Gestion des scènes (menu, deux niveaux, crédits) et du son.</li>
+    <li>Communication entre scripts par ScriptableObjects, pooling d'objets, console de debug.</li>
+  </ul>
+  <h4>Ce que ça m'a appris</h4>
+  <p>Organiser un projet C# en plusieurs systèmes qui communiquent entre eux, et travailler à deux sur le même code avec Git.</p>
+</template>
+
+<template id="r-php">
+  <h3>Site dynamique PHP / MySQL</h3>
+  <p class="meta">PHP · MySQL · BUT MMI 2023-2024 · projet de groupe à quatre</p>
+  <h4>Le projet</h4>
+  <p>Un site dynamique (SAE 203) avec une partie publique et un back-office d'administration, en ligne sur AlwaysData. La base contient quatre tables : articles, auteurs, messages et SAE.</p>
+  <h4>Ma part</h4>
+  <ul>
+    <li>Création, modification et suppression des articles et des auteurs (avec une photo de profil par défaut).</li>
+    <li>Suppression d'un auteur : ses articles liés sont supprimés d'abord, pour éviter l'erreur de clé étrangère.</li>
+    <li>Gestion des messages reçus par le formulaire de contact.</li>
+    <li>Page de connexion, page SAE, favicon et transitions CSS.</li>
+    <li>Confirmations de suppression en JavaScript.</li>
+  </ul>
+  <h4>En équipe</h4>
+  <p>Quatre étudiants. Les autres ont réalisé la page article et la page équipe de rédaction.</p>
+  <h4>Ce qui m'a manqué</h4>
+  <p>Je voulais ajouter un bouton « répondre » aux messages. Je ne l'ai pas terminé, faute de connaissances à l'époque.</p>
+</template>
+
+<template id="r-site">
+  <h3>Ce portfolio</h3>
+  <p class="meta">HTML · CSS · JavaScript · Three.js</p>
+  <h4>Le projet</h4>
+  <p>Un site pensé comme une timeline de montage : on le parcourt de gauche à droite, et le timecode en bas suit la position.</p>
+  <h4>Ce qu'il y a dedans</h4>
+  <ul>
+    <li>Un cadenas 3D entouré d'une pellicule, qui s'ouvre au clic.</li>
+    <li>Un défilement horizontal sur mesure : molette, flèches du clavier, glissement tactile.</li>
+    <li>Des cartes qui tournent en 3D et un fond flou pour les comptes rendus.</li>
+    <li>Des logos qui apparaissent au survol des compétences.</li>
+  </ul>
+  <h4>Hébergement</h4>
+  <p>GitHub Pages, sans framework : tout le code est dans trois fichiers.</p>
+</template>
+
+<template id="r-write">
+  <h3>Premiers write-ups</h3>
+  <p class="meta">Bientôt · TryHackMe · Root-Me · OverTheWire</p>
+  <h4>Le plan</h4>
+  <p>Un compte rendu par challenge résolu, publié sur GitHub et lié depuis ici.</p>
+  <h4>Le format</h4>
+  <ul>
+    <li>L'objectif du challenge.</li>
+    <li>Les outils utilisés.</li>
+    <li>Les étapes, avec les commandes.</li>
+    <li>Ce que j'ai appris et ce que je referais autrement.</li>
+  </ul>
+  <h4>Par où je commence</h4>
+  <p>OverTheWire Bandit, puis TryHackMe (Pre Security) et les premiers challenges web de Root-Me.</p>
+</template>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="script.js"></script>
