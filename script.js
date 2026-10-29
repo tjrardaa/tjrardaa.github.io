@@ -181,7 +181,7 @@ $('#soundBtn').onclick=()=>{soundOn=!soundOn;try{localStorage.setItem('sound',so
 /* ---------- Vitrine à trophées ---------- */
 // Pour débloquer un trophée : ajoute  got:true,date:'12/11/2026'  à son objet.
 const TROPHIES=[
- {t:'Bandit niveau 10',d:'OverTheWire : résoudre les 10 premiers niveaux en SSH.',k:'medal',c:'#ff5a36'},
+ {t:'Bandit niveau 10',d:'OverTheWire : résoudre les 10 premiers niveaux en SSH.',k:'medal',c:'#ff5a36',got:true,date:'29/10/2026'},
  {t:'Pre Security',d:'TryHackMe : terminer le parcours gratuit Pre Security.',k:'shield',c:'#2f4bff'},
  {t:'5 challenges Root-Me',d:'Résoudre 5 challenges faciles (web ou cryptanalyse).',k:'trophy',c:'#ffb400'},
  {t:'Badge Cisco',d:'Cisco Skills for All : décrocher un premier badge de formation.',k:'medal',c:'#1ba0d7'},
