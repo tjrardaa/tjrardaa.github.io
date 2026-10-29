@@ -19,31 +19,31 @@
     <a href="#parcours" data-go="1">Parcours</a>
     <a href="#projets" data-go="2">Projets</a>
     <a href="#competences" data-go="3">Compétences</a>
-    <a href="#programme" data-go="4">Programme</a>
-    <a href="#contact" data-go="5">Contact</a>
+    <a href="#contact" data-go="4">Contact</a>
   </nav>
 </header>
+
+<canvas id="scene" aria-hidden="true"></canvas>
 
 <main id="track" class="track" tabindex="-1">
 
   <section class="panel hero" id="accueil" data-label="Accueil">
-    <canvas id="scene" aria-hidden="true"></canvas>
     <div class="hero-txt">
       <p class="kicker">Portfolio · Alternance janvier 2027</p>
       <h1><span class="l1">Arda Nigiz.</span><span class="l2">Monteur vidéo,</span><span class="pill">futur <b>pentester.</b></span></h1>
       <p class="lead">Étudiant en Bachelor Cybersécurité à l'ESGI Paris. Je cherche une alternance en cybersécurité, réseaux ou systèmes.</p>
-      <p class="hint3d" id="hint3d">Clique sur le cadenas.</p>
     </div>
     <div class="scrollhint" id="scrollhint" aria-hidden="true"><span>Fais défiler</span><i></i></div>
   </section>
 
   <section class="panel" id="parcours" data-label="Parcours">
     <h2><span>01</span>Parcours</h2>
-    <p class="sub">Comme sur une timeline de montage : chaque plan a sa durée.</p>
+    <p class="sub">Du bac pro à l'alternance, avec ce que je fais en ce moment.</p>
     <ol class="tl">
       <li><time>2023</time><b>Bac professionnel microtechniques</b><p>Un premier pas dans la technique et l'électronique.</p></li>
       <li><time>2023 – 2025</time><b>BUT MMI, développement web</b><p>IUT de Cergy-Pontoise. 2 années validées : web, bases de données, réseaux.</p></li>
-      <li><time>Janv. 2025 →</time><b>Monteur vidéo, auto-entrepreneur</b><p>Montage et livraison de vidéos YouTube et TikTok. Relation client, délais, autonomie.</p></li>
+      <li><time>Janv. 2025 →</time><b>Monteur vidéo, auto-entrepreneur</b><p>Vidéos YouTube et TikTok pour des clients. Relation client, délais, autonomie.</p></li>
+      <li class="doing"><time>Aujourd'hui</time><b>Je me forme à la cybersécurité</b><p>OverTheWire Bandit en cours, puis TryHackMe, Root-Me, un home lab Kali et des write-ups sur GitHub.</p></li>
       <li class="now"><time>Janv. 2027</time><b>Bachelor Cybersécurité, ESGI Paris</b><p>3<sup>e</sup> année en alternance : 3 semaines en entreprise, 1 semaine à l'école.</p></li>
     </ol>
   </section>
@@ -65,33 +65,26 @@
     <div class="skills" id="skills"></div>
   </section>
 
-  <section class="panel" id="programme" data-label="Programme">
-    <h2><span>04</span>Mon programme d'ici janvier</h2>
-    <p class="sub">La cybersécurité, ça se pratique. Voici où j'en suis, mis à jour au fil de l'eau.</p>
-    <ul class="log">
-      <li data-s="doing"><i></i>OverTheWire Bandit : niveaux 0 à 10 <em>en cours</em></li>
-      <li data-s="todo"><i></i>TryHackMe : Pre Security (gratuit) <em>à faire</em></li>
-      <li data-s="todo"><i></i>Root-Me : premiers challenges web <em>à faire</em></li>
-      <li data-s="todo"><i></i>Home lab : Kali Linux dans VirtualBox <em>à faire</em></li>
-      <li data-s="todo"><i></i>Un write-up par semaine sur GitHub <em>à faire</em></li>
-    </ul>
-  </section>
-
   <section class="panel contact" id="contact" data-label="Contact">
-    <h2><span>05</span>Contact</h2>
+    <div class="ctc">
+    <h2><span>04</span>Contact</h2>
     <p class="big">Une alternance à proposer, en cybersécurité, réseaux ou systèmes, en Île-de-France ?</p>
     <a class="cta" href="mailto:bryanigizarda@gmail.com">bryanigizarda@gmail.com</a>
     <p class="row"><a href="CV_Arda_Nigiz.pdf" download>Télécharger mon CV</a><a href="https://github.com/tjrardaa" target="_blank" rel="noopener">github.com/tjrardaa</a></p>
     <p class="fine">Créteil · fait main en HTML, CSS et JavaScript</p>
+    <p class="hint3d" id="hint3d">Clique sur le cadenas.</p>
+    </div>
   </section>
 </main>
 
 <footer class="dock" id="dock">
   <button class="step" id="prev" type="button" aria-label="Section précédente">‹</button>
   <div class="rail" id="rail"><div class="fill" id="fill"></div><div class="head" id="head"></div></div>
-  <span class="tc" id="tc" aria-hidden="true">00:00:00:00</span>
+  <span class="tc" id="tc" aria-hidden="true">0x00</span>
   <button class="step" id="next" type="button" aria-label="Section suivante">›</button>
 </footer>
+
+<div id="toast" role="status" aria-live="polite"></div>
 
 <div id="peek" aria-hidden="true">
   <div class="bub"><b id="pname"></b><span id="pnote"></span></div>
@@ -145,10 +138,10 @@
   <h3>Ce portfolio</h3>
   <p class="meta">HTML · CSS · JavaScript · Three.js</p>
   <h4>Le projet</h4>
-  <p>Un site pensé comme une timeline de montage : on le parcourt de gauche à droite, et le timecode en bas suit la position.</p>
+  <p>Un site qui se parcourt de gauche à droite, avec une scène 3D construite autour d'un cadenas.</p>
   <h4>Ce qu'il y a dedans</h4>
   <ul>
-    <li>Un cadenas 3D entouré d'une pellicule, qui s'ouvre au clic.</li>
+    <li>Un cadenas 3D entouré de 0 et de 1, qui s'ouvre au clic dans la section contact.</li>
     <li>Un défilement horizontal sur mesure : molette, flèches du clavier, glissement tactile.</li>
     <li>Des cartes qui tournent en 3D et un fond flou pour les comptes rendus.</li>
     <li>Des logos qui apparaissent au survol des compétences.</li>

@@ -11,7 +11,7 @@ a{color:inherit}button{font:inherit;color:inherit;cursor:pointer}
 .links{display:flex;gap:22px}.links a{color:var(--mut);transition:color .2s}.links a:hover,.links a.on{color:var(--ink)}
 .links a.on{text-decoration:underline;text-decoration-color:var(--coral);text-decoration-thickness:2px;text-underline-offset:5px}
 
-.track{position:fixed;inset:0;display:flex;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;outline:0}
+.track{position:fixed;inset:0;z-index:1;display:flex;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;outline:0}
 .track::-webkit-scrollbar{display:none}
 @media (pointer:coarse){.track{scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}.panel{scroll-snap-align:start}}
 .panel{position:relative;flex:0 0 100vw;width:100vw;height:100vh;height:100svh;padding:92px 7vw 104px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;justify-content:center;scrollbar-width:thin}
@@ -21,8 +21,9 @@ h2 span{font:500 14px "DM Mono",monospace;color:var(--coral);margin-right:14px;v
 
 /* Accueil */
 .hero{flex-direction:row;align-items:center;justify-content:flex-start}
-#scene{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:default}
-.hero-txt{position:relative;z-index:2;max-width:640px;pointer-events:none}
+#scene{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+body.hoverlock .track{cursor:pointer}
+.hero-txt{position:relative;z-index:2;max-width:640px}
 .kicker{font:500 13px "DM Mono",monospace;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px}
 h1{font-weight:800;line-height:.98;letter-spacing:-.04em;font-size:clamp(44px,8.2vw,104px)}
 h1 span{display:block}
@@ -30,23 +31,23 @@ h1 span{display:block}
 .pill{display:inline-block!important;margin-top:.12em;background:var(--ink);color:#fff;padding:.02em .2em .08em;border-radius:.18em;font-size:.62em;letter-spacing:-.03em}
 .pill b{color:var(--sun);font-weight:800}
 .lead{margin-top:24px;font-size:clamp(16px,1.6vw,20px);max-width:480px}
-.hint3d{margin-top:14px;font:400 12px "DM Mono",monospace;color:var(--mut);transition:opacity .4s}
+.hint3d{margin-top:18px;font:400 12px "DM Mono",monospace;color:var(--mut);transition:opacity .4s}
 .scrollhint{position:absolute;right:7vw;bottom:96px;z-index:3;display:flex;align-items:center;gap:12px;font:500 13px "DM Mono",monospace;background:var(--ink);color:#fff;padding:10px 16px;border-radius:99px;transition:opacity .5s,transform .5s}
 .scrollhint i{width:26px;height:2px;background:var(--sun);position:relative;animation:nudge 1.3s ease-in-out infinite}
 .scrollhint i::after{content:"";position:absolute;right:0;top:-4px;width:8px;height:8px;border-top:2px solid var(--sun);border-right:2px solid var(--sun);transform:rotate(45deg)}
 @keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(8px)}}
 .scrollhint.off{opacity:0;transform:translateY(10px);pointer-events:none}
 .no3d #scene{display:none}
-.no3d .hero{background:radial-gradient(circle at 80% 40%,rgba(255,90,54,.25),transparent 40%),radial-gradient(circle at 70% 75%,rgba(47,75,255,.18),transparent 45%)}
+.no3d .hero,.no3d .contact{background:radial-gradient(circle at 80% 40%,rgba(255,90,54,.25),transparent 40%),radial-gradient(circle at 70% 75%,rgba(47,75,255,.18),transparent 45%)}
 
 /* Parcours */
-.tl{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:26px;padding:0;margin-top:26px;position:relative}
+.tl{list-style:none;display:grid;grid-template-columns:repeat(5,1fr);gap:26px;padding:0;margin-top:26px;position:relative}
 .tl::before{content:"";position:absolute;left:0;right:0;top:7px;height:2px;background:var(--ink)}
 .tl li{position:relative;padding-top:32px}
 .tl li::before{content:"";position:absolute;left:0;top:0;width:16px;height:16px;border-radius:50%;background:var(--bg);border:2px solid var(--ink)}
-.tl .now::before{background:var(--coral)}
+.tl .now::before{background:var(--coral)}.tl .doing::before{background:var(--sun)}
 .tl time{display:block;font:500 13px "DM Mono",monospace;color:var(--mut);margin-bottom:6px}
-.tl b{display:block;font-size:20px;line-height:1.2;letter-spacing:-.01em;margin-bottom:6px}
+.tl b{display:block;font-size:19px;line-height:1.2;letter-spacing:-.01em;margin-bottom:6px}
 .tl p{color:var(--mut);font-size:15.5px}
 
 /* Cartes projets */
@@ -74,13 +75,7 @@ h1 span{display:block}
 .chip{border:2px solid var(--ink);border-radius:99px;padding:5px 14px;font-size:15px;background:var(--card);cursor:default;transition:background .15s,transform .15s}
 .chip:hover,.chip:focus-visible,.chip.hot{background:var(--sun);transform:translateY(-2px)}
 
-/* Programme */
-.log{list-style:none;padding:0;max-width:720px;border:2px solid var(--ink);border-radius:16px;background:var(--card);box-shadow:6px 6px 0 var(--ink);overflow:hidden}
-.log li{display:flex;align-items:center;gap:14px;padding:15px 20px;border-bottom:1.5px solid var(--line)}
-.log li:last-child{border:0}
-.log i{width:15px;height:15px;border-radius:50%;border:2px solid var(--ink);flex:none}
-.log [data-s=doing] i{background:var(--sun)}.log [data-s=done] i{background:var(--mint)}
-.log em{margin-left:auto;font:400 12px "DM Mono",monospace;color:var(--mut);font-style:normal;white-space:nowrap}
+/* (ancien programme supprimé) */
 
 /* Contact */
 .big{font-size:clamp(24px,3.6vw,40px);line-height:1.18;letter-spacing:-.025em;font-weight:600;max-width:760px;margin:20px 0 28px}
@@ -142,3 +137,9 @@ body.is-open #peek{opacity:0}
   #peek .tile{width:88px;height:88px}#peek .tile img{width:50px;height:50px}
 }
 @media (prefers-reduced-motion:reduce){.scrollhint i{animation:none}}
+
+.contact{align-items:flex-start}.ctc{max-width:640px}
+@media (max-width:900px){.contact{justify-content:flex-end;padding-bottom:110px}.ctc{max-width:none}}
+
+#toast{position:fixed;left:50%;top:62px;bottom:auto;transform:translate(-50%,-24px);opacity:0;background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font:500 13px "DM Mono",monospace;transition:opacity .35s,transform .45s cubic-bezier(.2,1.2,.4,1);z-index:30;pointer-events:none;max-width:90vw;border:2px solid var(--sun)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
