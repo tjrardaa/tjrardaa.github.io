@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>(function(){var t=null;try{t=localStorage.getItem('theme')}catch(e){}if(!t)t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.dataset.theme=t})()</script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,7 +22,10 @@
     <a href="#competences" data-go="3">Compétences</a>
     <a href="#contact" data-go="4">Contact</a>
   </nav>
+  <button class="theme" id="theme" type="button" aria-label="Changer de thème clair ou sombre" title="Mode clair / sombre"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path class="moon" d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z" fill="currentColor"/><g class="sun" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></svg></button>
 </header>
+
+<div id="bg" aria-hidden="true"><i class="dots"></i><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i><i class="blob b4"></i><i class="blob b5"></i><i class="blob b6"></i><i class="glow"></i></div>
 
 <canvas id="scene" aria-hidden="true"></canvas>
 
@@ -36,7 +40,7 @@
     <div class="scrollhint" id="scrollhint" aria-hidden="true"><span>Fais défiler</span><i></i></div>
   </section>
 
-  <section class="panel" id="parcours" data-label="Parcours">
+  <section class="panel" id="parcours" data-num="01" data-label="Parcours">
     <h2><span>01</span>Parcours</h2>
     <p class="sub">Du bac pro à l'alternance, avec ce que je fais en ce moment.</p>
     <ol class="tl">
@@ -48,7 +52,7 @@
     </ol>
   </section>
 
-  <section class="panel" id="projets" data-label="Projets">
+  <section class="panel" id="projets" data-num="02" data-label="Projets">
     <h2><span>02</span>Projets</h2>
     <p class="sub">Clique sur une carte pour lire le compte rendu.</p>
     <div class="cardrow">
@@ -59,13 +63,13 @@
     </div>
   </section>
 
-  <section class="panel" id="competences" data-label="Compétences">
+  <section class="panel" id="competences" data-num="03" data-label="Compétences">
     <h2><span>03</span>Compétences</h2>
     <p class="sub">Passe la souris sur une compétence (ou touche-la) : quelqu'un jette un œil.</p>
     <div class="skills" id="skills"></div>
   </section>
 
-  <section class="panel contact" id="contact" data-label="Contact">
+  <section class="panel contact" id="contact" data-num="04" data-label="Contact">
     <div class="ctc">
     <h2><span>04</span>Contact</h2>
     <p class="big">Une alternance à proposer, en cybersécurité, réseaux ou systèmes, en Île-de-France ?</p>

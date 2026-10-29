@@ -4,6 +4,12 @@ const track=$('#track'),panels=$$('.panel'),N=panels.length;
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const INTERACTIVE='a,button,.chip,.pcard,.report,input,textarea';
 let modal=false;
+const docEl=document.documentElement;let recolor=()=>{};
+const isDark=()=>docEl.dataset.theme==='dark';
+function setTheme(t,save){docEl.dataset.theme=t;if(save){try{localStorage.setItem('theme',t)}catch(e){}}recolor()}
+$('#theme').onclick=()=>setTheme(isDark()?'light':'dark',true);
+try{matchMedia('(prefers-color-scheme:dark)').addEventListener('change',e=>{let s=null;try{s=localStorage.getItem('theme')}catch(_){}if(!s)setTheme(e.matches?'dark':'light',false)})}catch(e){}
+const bg=$('#bg');
 
 /* ---------- Défilement horizontal fluide (par sections) ---------- */
 let anim=0;
@@ -51,6 +57,7 @@ const rail=$('#rail'),head=$('#head'),fill=$('#fill'),tc=$('#tc'),hint=$('#scrol
 const marks=panels.map((p,i)=>{const b=document.createElement('button');b.type='button';b.className='mk';b.style.left=(i/(N-1)*100)+'%';
   b.setAttribute('aria-label',p.dataset.label);b.innerHTML='<span>'+p.dataset.label+'</span>';b.onclick=()=>goPanel(i);rail.appendChild(b);return b});
 function ui(){
+  bg.style.setProperty('--sx',track.scrollLeft);
   const mx=maxX(),pr=mx?track.scrollLeft/mx:0;
   head.style.left=(pr*100)+'%';fill.style.width=(pr*100)+'%';
   tc.textContent='0x'+Math.round(pr*255).toString(16).toUpperCase().padStart(2,'0');
@@ -61,7 +68,8 @@ function ui(){
   if(c!==3)hidePeek();
 }
 addEventListener('resize',()=>{track.scrollLeft=cur()*track.clientWidth;ui()});
-setTimeout(()=>{if(!reduce&&track.scrollLeft<5&&!modal){scrollToX(80,520);setTimeout(()=>{if(track.scrollLeft<130)scrollToX(0,520)},750)}},2600);
+let touched=false;['wheel','keydown','pointerdown','touchstart'].forEach(ev=>addEventListener(ev,()=>{touched=true},{passive:true,once:true}));
+setTimeout(()=>{if(!reduce&&!touched&&track.scrollLeft<5&&!modal){scrollToX(80,520);setTimeout(()=>{if(!touched&&track.scrollLeft<130)scrollToX(0,520)},750)}},2600);
 
 /* ---------- Compétences : le logo qui jette un œil ---------- */
 const dev=n=>[`https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/${n}/${n}-original.svg`,`https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/${n}/${n}-plain.svg`,`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${n}/${n}-original.svg`];
@@ -160,15 +168,16 @@ const GL={};
 function glyph(t,col){const k=t+col;if(GL[k])return GL[k];const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');
   g.font=(t.length>1?'700 54px':'700 92px')+' "DM Mono",ui-monospace,monospace';g.textAlign='center';g.textBaseline='middle';g.fillStyle=col;g.fillText(t,64,68);
   return GL[k]=new THREE.CanvasTexture(c)}
-const GT=['0','1','0','1','0','1','0x','</>','{ }','0','1'],GC=['#12141f','#12141f','#ff5a36','#2f4bff'];
+const GT=['0','1','0','1','0','1','0x','</>','{ }','0','1'];
+const GCS={light:['#12141f','#12141f','#ff5a36','#2f4bff'],dark:['#f1eee5','#f1eee5','#ff6a47','#7b95ff']};
 function makeShell(rMin,rMax,count){
   const g=new THREE.Group();
-  for(let i=0;i<count;i++){const t=GT[(Math.random()*GT.length)|0],col=GC[(Math.random()*GC.length)|0];
+  for(let i=0;i<count;i++){const GC=GCS[isDark()?'dark':'light'],t=GT[(Math.random()*GT.length)|0],col=GC[(Math.random()*GC.length)|0];
     const s=new THREE.Sprite(new THREE.SpriteMaterial({map:glyph(t,col),transparent:true,depthWrite:false,opacity:.9}));
     const r=rMin+Math.random()*(rMax-rMin),th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);
     s.position.set(r*Math.sin(ph)*Math.cos(th),r*Math.cos(ph)*.8,r*Math.sin(ph)*Math.sin(th));
     const z=.36+Math.random()*.34;s.scale.set(z,z,1);g.add(s)}
-  const ico=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(rMin-.2,1)),new THREE.LineBasicMaterial({color:0x12141f,transparent:true,opacity:.16}));g.add(ico);
+  const ico=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(rMin-.2,1)),new THREE.LineBasicMaterial({color:isDark()?0xf1eee5:0x12141f,transparent:true,opacity:isDark()?.2:.16}));g.add(ico);
   return g}
 function makeLock(){
   const root=new THREE.Group(),lock=new THREE.Group();root.add(lock);lock.scale.setScalar(1.35);
@@ -183,6 +192,7 @@ function makeLock(){
   return {root,lock,pivot,mat,shell,hover:false,open:false,boost:0}}
 const A=makeLock(),B=makeLock();     // A : accueil · B : contact
 B.shell.scale.setScalar(.85);
+recolor=()=>{for(const L of [A,B]){L.root.remove(L.shell);L.shell=makeShell(3.2,4.7,70);L.root.add(L.shell)}B.shell.scale.setScalar(.85)};
 const green=new THREE.Color(0x35d6a3),coral=new THREE.Color(0xff5a36);
 
 let mx=0,my=0,w=1,h=1,hw=1,hh=1,baseX=0,baseY=0,S=1;
@@ -196,7 +206,7 @@ const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();
 function aim(e,L){ndc.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight*2-1));ray.setFromCamera(ndc,cam);return ray.intersectObject(L.lock,true).length>0}
 const sx=()=>track.scrollLeft/innerWidth;
 addEventListener('pointermove',e=>{
-  mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;if(modal)return;
+  mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;bg.style.setProperty('--mx',e.clientX+'px');bg.style.setProperty('--my',e.clientY+'px');if(modal)return;
   const ok=!(e.target.closest&&e.target.closest(INTERACTIVE));
   A.hover=ok&&sx()<.7&&aim(e,A);B.hover=ok&&sx()>N-1.7&&aim(e,B);
   document.body.classList.toggle('hoverlock',B.hover)},{passive:true});
