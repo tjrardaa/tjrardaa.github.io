@@ -117,7 +117,7 @@ function openP(btn){
   const cx=R.left+R.width/2,cy=R.top+R.height/2,s1=Math.min(1.5,vh*.6/R.height,vw*.78/R.width);
   let s2,x2,y2;
   if(narrow){s2=.52;x2=vw/2;y2=64+R.height*s2/2;Object.assign(rep.style,{left:'12px',right:'12px',bottom:'12px',top:(y2+R.height*s2/2+14)+'px'})}
-  else{s2=Math.min(1.12,vh*.66/R.height);x2=vw*.22;y2=vh/2;Object.assign(rep.style,{left:(x2+R.width*s2/2+48)+'px',right:'5vw',top:'10vh',bottom:'10vh'})}
+  else{const zone=vw*.4;s2=Math.min(1.12,vh*.66/R.height,(zone-120)/R.width);x2=zone/2;y2=vh/2;Object.assign(rep.style,{left:zone+'px',right:'5vw',top:'10vh',bottom:'10vh'})}
   stage.hidden=false;document.body.classList.add('is-open');btn.style.visibility='hidden';
   requestAnimationFrame(()=>stage.classList.add('on'));
   const dur=reduce?1:1300;
@@ -188,7 +188,7 @@ const green=new THREE.Color(0x35d6a3),coral=new THREE.Color(0xff5a36);
 let mx=0,my=0,w=1,h=1,hw=1,hh=1,baseX=0,baseY=0,S=1;
 function size(){w=innerWidth;h=innerHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
   hh=Math.tan(22.5*Math.PI/180)*cam.position.z;hw=hh*cam.aspect;
-  if(w>900){S=Math.min(1.15,hw*.46/4.2);baseX=hw*.5;baseY=0}else{S=Math.min(.9,hw*.86/4.2);baseX=0;baseY=hh*.38}
+  if(w>900){baseX=hw*.44;S=Math.min(1.1,hw*.5/4.8);baseY=0}else{S=Math.min(.9,hw*.88/4.8);baseX=0;baseY=hh*.38}
   A.root.scale.setScalar(S);B.root.scale.setScalar(S)}
 size();addEventListener('resize',size);
 
