@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arda Nigiz – Portfolio</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="boot" class="screen on" role="button" tabindex="0" aria-label="Démarrage, appuyez pour continuer">
+  <div class="logo">AN</div>
+  <div>Arda Nigiz</div>
+  <div style="color:#aaa">Démarrage du portfolio…</div>
+  <div class="bar"><i></i></div>
+</div>
+
+<div id="login" class="screen">
+  <div class="top"></div>
+  <div class="mid">
+    <div class="left"><div class="logo">AN</div><div class="brand">Arda Nigiz</div><p>Pour commencer, cliquez sur votre nom d'utilisateur</p></div>
+    <div class="sep"></div>
+    <div class="right"><button class="user" id="user" type="button"><span class="av">👤</span><span><b>Arda</b>Portfolio</span></button></div>
+  </div>
+  <div class="bottom"><button class="shut" id="shut" type="button"><span>⏻</span>Arrêter l'ordinateur</button><div class="hint">Une fois la session ouverte, double-cliquez sur les icônes du bureau pour explorer le portfolio.</div></div>
+</div>
+
+<main id="desktop" aria-label="Bureau"></main>
+
+<div id="menu" role="menu">
+  <div class="side">Arda Nigiz</div>
+  <div class="list" id="mlist"></div>
+</div>
+
+<div id="task">
+  <button class="start" id="startBtn" type="button" aria-haspopup="true" aria-label="Démarrer"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M1 4C3.5 2.6 6 5 9 3.6V9C6 10.4 3.5 8 1 9.4Z" fill="#f25022"/><path d="M10.5 3.4C13.5 2 16 4.4 19 3V8.6C16 10 13.5 7.6 10.5 9Z" fill="#7fba00"/><path d="M1 10.8C3.5 9.4 6 11.8 9 10.4V16C6 17.4 3.5 15 1 16.4Z" fill="#00a4ef"/><path d="M10.5 10.2C13.5 8.8 16 11.2 19 9.8V15.4C16 16.8 13.5 14.4 10.5 15.8Z" fill="#ffb900"/></svg><span>démarrer</span></button>
+  <div class="apps" id="apps"></div>
+  <div id="clock"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
