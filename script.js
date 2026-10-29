@@ -1,13 +1,13 @@
 (()=>{
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const track=$('#track'),panels=$$('.panel'),N=panels.length;
+const track=$('#track'),panels=$$('.panel'),N=panels.length,compIdx=panels.findIndex(p=>p.id==='competences');
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-const INTERACTIVE='a,button,.chip,.pcard,.report,input,textarea';
-let modal=false;
+const INTERACTIVE='a,button,.chip,.pcard,.slot,.report,#term,.tools,input,textarea';
+let modal=false,termOpen=false;
 const docEl=document.documentElement;let recolor=()=>{};
 const isDark=()=>docEl.dataset.theme==='dark';
 function setTheme(t,save){docEl.dataset.theme=t;if(save){try{localStorage.setItem('theme',t)}catch(e){}}recolor()}
-$('#theme').onclick=()=>setTheme(isDark()?'light':'dark',true);
+$('#theme').onclick=()=>{sfx.tick();setTheme(isDark()?'light':'dark',true)};
 try{matchMedia('(prefers-color-scheme:dark)').addEventListener('change',e=>{let s=null;try{s=localStorage.getItem('theme')}catch(_){}if(!s)setTheme(e.matches?'dark':'light',false)})}catch(e){}
 const bg=$('#bg');
 
@@ -25,10 +25,10 @@ function scrollToX(x,min=600){
   (function tick(now){const p=Math.min(1,(now-t0)/dur);track.scrollLeft=from+(to-from)*ease(p);
     if(p<1)anim=requestAnimationFrame(tick);else{anim=0;track.style.scrollSnapType=''}})(t0);
 }
-const goPanel=i=>scrollToX(Math.max(0,Math.min(N-1,i))*track.clientWidth);
+const goPanel=i=>{sfx.nav();scrollToX(Math.max(0,Math.min(N-1,i))*track.clientWidth)};
 let gate=true,lastW=0;
 addEventListener('wheel',e=>{
-  if(modal||e.ctrlKey)return;
+  if(modal||termOpen||e.ctrlKey)return;
   const m=e.deltaMode===1?32:e.deltaMode===2?innerHeight:1,dx=e.deltaX*m,dy=e.deltaY*m;
   const p=e.target.closest&&e.target.closest('.panel');
   if(p&&Math.abs(dy)>Math.abs(dx)&&p.scrollHeight>p.clientHeight+24){
@@ -42,7 +42,10 @@ addEventListener('wheel',e=>{
 },{passive:false});
 track.addEventListener('scroll',ui,{passive:true});
 addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&termOpen){closeTerm();return}
+  if((e.key==='²'||e.key==='`')&&document.activeElement!==tcmd&&!modal){e.preventDefault();toggleTerm();return}
   if(modal){if(e.key==='Escape')closeP();return}
+  if(termOpen)return;
   const t=document.activeElement&&document.activeElement.tagName;if(t==='INPUT'||t==='TEXTAREA')return;
   if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();goPanel(cur()+1)}
   else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();goPanel(cur()-1)}
@@ -65,11 +68,11 @@ function ui(){
   $$('.links a').forEach(a=>a.classList.toggle('on',+a.dataset.go===c));
   $('#prev').disabled=c===0;$('#next').disabled=c===N-1;
   if(track.scrollLeft>60)hint.classList.add('off');
-  if(c!==3)hidePeek();
+  if(c!==compIdx)hidePeek();
 }
 addEventListener('resize',()=>{track.scrollLeft=cur()*track.clientWidth;ui()});
 let touched=false;['wheel','keydown','pointerdown','touchstart'].forEach(ev=>addEventListener(ev,()=>{touched=true},{passive:true,once:true}));
-setTimeout(()=>{if(!reduce&&!touched&&track.scrollLeft<5&&!modal){scrollToX(80,520);setTimeout(()=>{if(!touched&&track.scrollLeft<130)scrollToX(0,520)},750)}},2600);
+setTimeout(()=>{if(!reduce&&!touched&&track.scrollLeft<5&&!modal&&!termOpen){scrollToX(80,520);setTimeout(()=>{if(!touched&&track.scrollLeft<130)scrollToX(0,520)},750)}},2600);
 
 /* ---------- Compétences : le logo qui jette un œil ---------- */
 const dev=n=>[`https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/${n}/${n}-original.svg`,`https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/${n}/${n}-plain.svg`,`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${n}/${n}-original.svg`];
@@ -116,7 +119,7 @@ const stage=$('#stage'),fc=$('#fc'),rep=$('#report');
 let canim=null,busy=false,from=null;
 const T=(x,y,s,a)=>`perspective(1500px) translate(${x}px,${y}px) scale(${s}) rotateY(${a}deg)`;
 function openP(btn){
-  if(modal||busy)return;busy=modal=true;from=btn;hidePeek();
+  if(modal||busy||termOpen)return;busy=modal=true;from=btn;hidePeek();sfx.whoosh();
   const R=btn.getBoundingClientRect(),vw=innerWidth,vh=innerHeight,narrow=vw<900;
   $('.front',fc).innerHTML=btn.innerHTML;$('.front',fc).className='face pcard front '+[...btn.classList].find(c=>c.startsWith('t-'));
   Object.assign(fc.style,{left:R.left+'px',top:R.top+'px',width:R.width+'px',height:R.height+'px'});
@@ -137,7 +140,7 @@ function openP(btn){
   canim.onfinish=()=>{busy=false;const x=$('.x',rep);x&&x.focus({preventScroll:true})};
 }
 function closeP(){
-  if(!modal||busy)return;busy=true;rep.classList.remove('on');stage.classList.remove('on');document.body.classList.remove('is-open');
+  if(!modal||busy)return;busy=true;sfx.whoosh2();rep.classList.remove('on');stage.classList.remove('on');document.body.classList.remove('is-open');
   canim.reverse();
   canim.onfinish=()=>{stage.hidden=true;from.style.visibility='';canim.cancel();modal=busy=false;from.focus({preventScroll:true})};
 }
@@ -145,6 +148,154 @@ $$('.pcard',track).forEach(b=>b.addEventListener('click',()=>openP(b)));
 $('.veil',stage).addEventListener('click',closeP);
 addEventListener('resize',()=>{if(modal&&!busy){rep.classList.remove('on');stage.classList.remove('on');stage.hidden=true;if(from)from.style.visibility='';canim&&canim.cancel();document.body.classList.remove('is-open');modal=false}});
 ui();
+
+
+/* ---------- Notification ---------- */
+const toast=$('#toast');let tt;
+function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),2600)}
+
+/* ---------- Sons (activés par défaut, synthétisés) ---------- */
+let soundOn=true;try{soundOn=localStorage.getItem('sound')!=='off'}catch(e){}
+let ac=null;
+function tone(f,d,type='sine',v=.05,slide=0,delay=0){
+  if(!soundOn)return;
+  try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();
+    const t=ac.currentTime+delay,o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(f,t);
+    if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(30,f*slide),t+d);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+.05)}catch(e){}}
+const sfx={
+  tick:()=>tone(620,.05,'triangle',.035),
+  nav:()=>tone(380,.09,'triangle',.04,1.4),
+  whoosh:()=>tone(160,.4,'sawtooth',.018,4),
+  whoosh2:()=>tone(640,.35,'sawtooth',.016,.25),
+  open:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.22,'sine',.05,0,i*.07)),
+  lock:()=>{tone(220,.12,'square',.035,.5);tone(150,.14,'square',.03,.6,.06)},
+  win:()=>[659,784,988,1319].forEach((f,i)=>tone(f,.28,'triangle',.05,0,i*.09)),
+  key:()=>tone(900+Math.random()*200,.03,'square',.012),
+  err:()=>tone(180,.18,'sawtooth',.03,.7)
+};
+const paintSound=()=>document.body.classList.toggle('muted',!soundOn);paintSound();
+$('#soundBtn').onclick=()=>{soundOn=!soundOn;try{localStorage.setItem('sound',soundOn?'on':'off')}catch(e){}paintSound();if(soundOn)sfx.tick()};
+
+/* ---------- Vitrine à trophées ---------- */
+// Pour débloquer un trophée : ajoute  got:true,date:'12/11/2026'  à son objet.
+const TROPHIES=[
+ {t:'Bandit niveau 10',d:'OverTheWire : résoudre les 10 premiers niveaux en SSH.',k:'medal',c:'#ff5a36'},
+ {t:'Pre Security',d:'TryHackMe : terminer le parcours gratuit Pre Security.',k:'shield',c:'#2f4bff'},
+ {t:'5 challenges Root-Me',d:'Résoudre 5 challenges faciles (web ou cryptanalyse).',k:'trophy',c:'#ffb400'},
+ {t:'Badge Cisco',d:'Cisco Skills for All : décrocher un premier badge de formation.',k:'medal',c:'#1ba0d7'},
+ {t:'Home lab',d:'Kali Linux et une cible vulnérable dans VirtualBox.',k:'cube',c:'#35d6a3'},
+ {t:'Premier write-up',d:'Publier un compte rendu de challenge sur GitHub.',k:'doc',c:'#7b5cff'},
+ {t:'Premier lab PortSwigger',d:'Résoudre un lab de la Web Security Academy.',k:'bug',c:'#ff6a47'},
+ {t:'Alternance signée',d:'Le trophée final : un contrat d\'alternance pour janvier 2027.',k:'crown',c:'#ffd23f'}
+];
+const IC={
+ medal:c=>`<svg viewBox="0 0 64 64"><path d="M22 3h10l-5 20-9-3z" fill="#2f4bff"/><path d="M42 3H32l5 20 9-3z" fill="#ff5a36"/><circle cx="32" cy="40" r="18" fill="${c}" stroke="#12141f" stroke-width="3"/><circle cx="32" cy="40" r="12" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2"/><path d="M32 31l3 6.2 6.8 1-4.9 4.8 1.2 6.8-6.1-3.2-6.1 3.2 1.2-6.8-4.9-4.8 6.8-1z" fill="#fff"/></svg>`,
+ shield:c=>`<svg viewBox="0 0 64 64"><path d="M32 5l22 8v18c0 15-10 25-22 30C20 56 10 46 10 31V13z" fill="${c}" stroke="#12141f" stroke-width="3" stroke-linejoin="round"/><path d="M21 32l8 8 15-17" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+ trophy:c=>`<svg viewBox="0 0 64 64"><path d="M16 8h32v16c0 10-7 16-16 16S16 34 16 24z" fill="${c}" stroke="#12141f" stroke-width="3" stroke-linejoin="round"/><path d="M16 13H7c0 9 4 14 11 15M48 13h9c0 9-4 14-11 15" fill="none" stroke="#12141f" stroke-width="3" stroke-linecap="round"/><rect x="28" y="40" width="8" height="10" fill="${c}" stroke="#12141f" stroke-width="3"/><rect x="19" y="50" width="26" height="9" rx="2" fill="#12141f"/><path d="M24 14v10" stroke="#fff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/></svg>`,
+ cube:c=>`<svg viewBox="0 0 64 64"><path d="M32 5l23 12-23 12L9 17z" fill="#fff" stroke="#12141f" stroke-width="3" stroke-linejoin="round"/><path d="M9 17l23 12v29L9 46z" fill="${c}" stroke="#12141f" stroke-width="3" stroke-linejoin="round"/><path d="M55 17L32 29v29l23-12z" fill="${c}" fill-opacity=".72" stroke="#12141f" stroke-width="3" stroke-linejoin="round"/></svg>`,
+ doc:c=>`<svg viewBox="0 0 64 64"><rect x="13" y="5" width="38" height="54" rx="5" fill="${c}" stroke="#12141f" stroke-width="3"/><path d="M21 18h22M21 27h22M21 36h22M21 45h13" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/></svg>`,
+ bug:c=>`<svg viewBox="0 0 64 64"><ellipse cx="32" cy="38" rx="13" ry="17" fill="${c}" stroke="#12141f" stroke-width="3"/><circle cx="32" cy="17" r="8" fill="${c}" stroke="#12141f" stroke-width="3"/><path d="M19 30H8M19 40H7M20 50l-9 6M45 30h11M45 40h12M44 50l9 6M26 10l-4-6M38 10l4-6M32 26v24" fill="none" stroke="#12141f" stroke-width="3" stroke-linecap="round"/></svg>`,
+ crown:c=>`<svg viewBox="0 0 64 64"><path d="M6 47L10 16l14 15 8-20 8 20 14-15 4 31z" fill="${c}" stroke="#12141f" stroke-width="3" stroke-linejoin="round"/><rect x="7" y="48" width="50" height="10" rx="3" fill="${c}" stroke="#12141f" stroke-width="3"/><circle cx="32" cy="38" r="3.5" fill="#ff5a36"/><circle cx="19" cy="40" r="3" fill="#2f4bff"/><circle cx="45" cy="40" r="3" fill="#35d6a3"/></svg>`
+};
+const LK='<svg viewBox="0 0 24 24" width="14" height="14"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>';
+const cab=$('#cabinet');let per=0;
+function renderCab(){
+  const n=innerWidth>900?4:2;if(n===per)return;per=n;cab.innerHTML='';
+  for(let i=0;i<TROPHIES.length;i+=n){
+    const sh=document.createElement('div');sh.className='shelf';sh.style.setProperty('--n',n);
+    TROPHIES.slice(i,i+n).forEach(t=>{
+      const b=document.createElement('button');b.type='button';b.className='slot '+(t.got?'got':'lock');
+      b.innerHTML=`<span class="tro">${IC[t.k](t.c)}</span>${t.got?'':'<span class="lk">'+LK+'</span>'}<b>${t.t}</b><i>${t.got?'Débloqué le '+(t.date||''):'À débloquer'}</i><span class="tip">${t.d}</span>`;
+      b.onclick=()=>{if(t.got){sfx.win();say('Trophée débloqué : '+t.t)}else{sfx.err();say('À débloquer : '+t.d)}};
+      sh.appendChild(b)});
+    cab.appendChild(sh)}
+  $('#vcount').textContent=TROPHIES.filter(t=>t.got).length+' / '+TROPHIES.length}
+renderCab();addEventListener('resize',renderCab);
+
+/* ---------- Terminal ---------- */
+const term=$('#term'),tout=$('#tout'),tcmd=$('#tcmd');let hist=[],hi=0,welcomed=false;
+const esc=t=>t.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function out(t,cls){const d=document.createElement('div');if(cls)d.className=cls;d.innerHTML=t;tout.appendChild(d);tout.scrollTop=tout.scrollHeight}
+const SECS={accueil:0,apropos:1,parcours:2,projets:3,competences:4,vitrine:5,contact:6};
+const FILES={
+ 'about.txt':'Étudiant en Bachelor Cybersécurité à l\'ESGI Paris (3e année en alternance, janvier 2027). Je viens du développement web (BUT MMI) et je vise le pentest.',
+ 'competences.txt':SK.map(([g,it])=>g+' : '+it.map(x=>x[0]).join(', ')).join('\n'),
+ 'contact.txt':'bryanigizarda@gmail.com\ngithub.com/tjrardaa'
+};
+const CMD_NAMES=['help','whoami','about','ls','cat','projets','skills','contact','cv','goto','theme','sound','trophees','date','echo','clear','exit','sudo','hack','nmap','ping'];
+const CMDS={
+ help(){out('Commandes : <span class="c">'+CMD_NAMES.filter(x=>!['sudo','hack','nmap','ping'].includes(x)).join(' ')+'</span>\n<span class="m">Il y a aussi quelques surprises cachées…</span>')},
+ whoami(){out('arda — étudiant en Bachelor Cybersécurité (ESGI Paris), alternance dès janvier 2027.')},
+ about(){out(esc(FILES['about.txt']))},
+ ls(a){if(a==='projets'||a==='projets/')out('jeu-plateforme-2d/  site-php-mysql/  portfolio/  write-ups/ <span class="m">(bientôt)</span>');else out('<span class="c">about.txt  competences.txt  contact.txt  cv.pdf  projets/  vitrine/</span>')},
+ cat(a){if(!a)return out('Usage : cat &lt;fichier&gt;','e');if(FILES[a])out(esc(FILES[a]));else if(a==='cv.pdf')out('Fichier binaire. Utilise la commande <span class="c">cv</span> pour le télécharger.','m');else out('cat : '+esc(a)+' : fichier introuvable','e')},
+ projets(){out('1. Jeu de plateforme 2D — C#, Unity (groupe de 2)\n2. Site dynamique — PHP, MySQL (groupe de 4, j\'ai fait le back-office)\n3. Ce portfolio — HTML, CSS, JavaScript, Three.js\n4. Write-ups — bientôt\n<span class="m">Tape « goto projets » pour les voir.</span>')},
+ skills(){out(esc(FILES['competences.txt']))},
+ contact(){out('bryanigizarda@gmail.com\ngithub.com/tjrardaa')},
+ cv(){const a=document.createElement('a');a.href='CV_Arda_Nigiz.pdf';a.download='CV_Arda_Nigiz.pdf';document.body.appendChild(a);a.click();a.remove();out('Téléchargement du CV… <span class="c">ok</span>')},
+ goto(a){if(!(a in SECS))return out('Usage : goto &lt;'+Object.keys(SECS).join('|')+'&gt;','e');closeTerm();setTimeout(()=>goPanel(SECS[a]),350)},
+ theme(a){const t=a==='dark'||a==='light'?a:(isDark()?'light':'dark');setTheme(t,true);out('Thème : <span class="c">'+(t==='dark'?'sombre':'clair')+'</span>')},
+ sound(a){soundOn=a==='off'?false:a==='on'?true:!soundOn;try{localStorage.setItem('sound',soundOn?'on':'off')}catch(e){}paintSound();out('Son : <span class="c">'+(soundOn?'activé':'coupé')+'</span>')},
+ trophees(){const g=TROPHIES.filter(t=>t.got).length;out('Trophées débloqués : <span class="c">'+g+' / '+TROPHIES.length+'</span>\n'+TROPHIES.map(t=>(t.got?'[x] ':'[ ] ')+t.t).join('\n'))},
+ date(){out(new Date().toLocaleString('fr-FR'))},
+ echo(a,all){out(esc(all))},
+ clear(){tout.innerHTML=''},
+ exit(){closeTerm()},
+ sudo(a,all){if(/make me hired/i.test(all)){sfx.open();out('<span class="c">Accès accordé. Alternance 2027 ?</span> Écris-moi : bryanigizarda@gmail.com')}else out('arda n\'est pas dans le fichier sudoers. <span class="e">Cet incident sera signalé.</span>')},
+ hack(){const L=['[*] Initialisation…','[*] Recherche de la cible…','[#####.....] 50 %','[##########] 100 %'];L.forEach((l,i)=>setTimeout(()=>out(l,'m'),i*450));setTimeout(()=>out('<span class="e">Accès refusé.</span> Je ne teste que ce que j\'ai le droit de tester : c\'est la règle d\'or du pentest.'),L.length*450)},
+ nmap(){out('Scan interdit ici. Un pentest se fait avec une <span class="c">autorisation écrite</span>, jamais sur une cible au hasard.')},
+ ping(){out('pong — 0 % de perte, 1 ms. Ce portfolio est en bonne santé.')}
+};
+function runCmd(line){
+  const raw=line.trim();if(!raw)return;out('<span class="c">arda@portfolio:~$</span> '+esc(raw));
+  hist.push(raw);hi=hist.length;
+  const [cmd,...rest]=raw.split(/\s+/),arg=rest[0]||'',all=rest.join(' ');
+  if(/^rm\s+-rf/.test(raw))return out('Bien essayé.','e');
+  if(CMDS[cmd])CMDS[cmd](arg.toLowerCase()===arg?arg:arg.toLowerCase(),all);
+  else{sfx.err();out('commande introuvable : '+esc(cmd)+'. Tape <span class="c">help</span>.','e')}
+}
+function openTerm(){termOpen=true;hidePeek();term.classList.add('on');term.setAttribute('aria-hidden','false');sfx.nav();
+  if(!welcomed){welcomed=true;out('Bienvenue sur le terminal d\'Arda. Tape <span class="c">help</span> pour commencer.')}
+  setTimeout(()=>tcmd.focus({preventScroll:true}),120)}
+function closeTerm(){termOpen=false;term.classList.remove('on');term.setAttribute('aria-hidden','true');tcmd.blur();sfx.tick()}
+function toggleTerm(){termOpen?closeTerm():openTerm()}
+$('#termBtn').onclick=toggleTerm;
+tcmd.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){const v=tcmd.value;tcmd.value='';runCmd(v)}
+  else if(e.key==='ArrowUp'){e.preventDefault();if(hi>0)tcmd.value=hist[--hi]||''}
+  else if(e.key==='ArrowDown'){e.preventDefault();hi=Math.min(hist.length,hi+1);tcmd.value=hist[hi]||''}
+  else if(e.key==='Tab'){e.preventDefault();const m=CMD_NAMES.filter(n=>n.startsWith(tcmd.value.trim()));if(tcmd.value.trim()&&m.length===1)tcmd.value=m[0]+' '}
+  else if(e.key.length===1)sfx.key()});
+term.addEventListener('click',()=>tcmd.focus({preventScroll:true}));
+
+/* ---------- Curseur personnalisé ---------- */
+if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+  document.body.classList.add('cc');
+  const cur=$('#cur'),ring=$('#ring'),lab=$('span',ring);let x=0,y=0,rx=0,ry=0;
+  addEventListener('pointermove',e=>{
+    x=e.clientX;y=e.clientY;document.body.classList.add('seen');cur.style.transform=`translate(${x}px,${y}px)`;
+    const t=e.target.closest&&e.target.closest('.pcard,.chip,.slot,a,button,#term');let txt='',cls='';
+    if(t){if(t.matches('.pcard')){cls='big';txt='Ouvrir'}else if(t.matches('.chip')){cls='big';txt='Regarde'}
+      else if(t.matches('.slot')){cls='big';txt=t.classList.contains('got')?'Bravo':'Verrouillé'}else if(t.matches('a,button')){cls='link'}}
+    else if(window.__lockHover){cls='big';txt=window.__lockHover}
+    ring.className=cls;lab.textContent=txt},{passive:true});
+  (function loop(){rx+=(x-rx)*.2;ry+=(y-ry)*.2;ring.style.transform=`translate(${rx}px,${ry}px)`;requestAnimationFrame(loop)})();
+}
+
+/* ---------- Nom qui se déchiffre ---------- */
+(function(){
+  const el=$('#name');if(!el||reduce)return;const fin=el.textContent;el.textContent='';
+  const sp=[...fin].map(ch=>{const s=document.createElement('span');s.textContent=ch;s.setAttribute('aria-hidden','true');el.appendChild(s);return s});
+  const run=()=>{
+    sp.forEach(s=>{if(s.textContent!==' '){const w=s.getBoundingClientRect().width;s.style.cssText='display:inline-block;width:'+w+'px;text-align:center'}});
+    const ch='01{}</>#x',t0=performance.now(),dur=1400;
+    (function tick(now){const p=Math.min(1,(now-t0)/dur);
+      sp.forEach((s,i)=>{const lock=.2+i/sp.length*.65;s.textContent=(p>=lock||fin[i]===' ')?fin[i]:ch[(Math.random()*ch.length)|0]});
+      if(p<1)requestAnimationFrame(tick);else sp.forEach((s,i)=>{s.textContent=fin[i];s.style.cssText=''})})(t0)};
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(run)
+})();
 
 /* ---------- Scène 3D : cadenas entourés de 0 et de 1 ---------- */
 const canvas=$('#scene');
@@ -206,16 +357,14 @@ const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();
 function aim(e,L){ndc.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight*2-1));ray.setFromCamera(ndc,cam);return ray.intersectObject(L.lock,true).length>0}
 const sx=()=>track.scrollLeft/innerWidth;
 addEventListener('pointermove',e=>{
-  mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;bg.style.setProperty('--mx',e.clientX+'px');bg.style.setProperty('--my',e.clientY+'px');if(modal)return;
+  mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;bg.style.setProperty('--mx',e.clientX+'px');bg.style.setProperty('--my',e.clientY+'px');if(modal||termOpen)return;
   const ok=!(e.target.closest&&e.target.closest(INTERACTIVE));
   A.hover=ok&&sx()<.7&&aim(e,A);B.hover=ok&&sx()>N-1.7&&aim(e,B);
-  document.body.classList.toggle('hoverlock',B.hover)},{passive:true});
-const toast=$('#toast');let tt;
-function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),2600)}
+  document.body.classList.toggle('hoverlock',B.hover);window.__lockHover=B.hover?(B.open?'Fermer':'Ouvrir'):(A.hover?'Coucou':'')},{passive:true});
 addEventListener('click',e=>{
-  if(modal||(e.target.closest&&e.target.closest(INTERACTIVE)))return;
-  if(sx()>N-1.7&&aim(e,B)){B.open=!B.open;B.boost=1;$('#hint3d').style.opacity=0;say(B.open?'Accès accordé. Alternance 2027 ?':'Re-verrouillé. Sécurité d\'abord.')}
-  else if(sx()<.7&&aim(e,A)){A.boost=1}});
+  if(modal||termOpen||(e.target.closest&&e.target.closest(INTERACTIVE)))return;
+  if(sx()>N-1.7&&aim(e,B)){B.open=!B.open;B.boost=1;B.open?sfx.open():sfx.lock();$('#hint3d').style.opacity=0;say(B.open?'Accès accordé. Alternance 2027 ?':'Re-verrouillé. Sécurité d\'abord.')}
+  else if(sx()<.7&&aim(e,A)){A.boost=1;sfx.tick()}});
 
 let t=0;
 (function frame(){requestAnimationFrame(frame);if(document.hidden)return;
