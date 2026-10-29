@@ -2,42 +2,99 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Arda Nigiz – Portfolio</title>
+<meta name="description" content="Arda Nigiz, étudiant en Bachelor Cybersécurité à l'ESGI Paris, à la recherche d'une alternance dès janvier 2027.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<header class="nav" id="nav">
+  <nav aria-label="Navigation">
+    <a href="#accueil" class="on">Accueil</a>
+    <a href="#parcours">Parcours</a>
+    <a href="#projets">Projets</a>
+    <a href="#competences">Compétences</a>
+    <a href="#programme">Programme</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="clocks" aria-hidden="true"><span>PAR <b id="c1">--:--</b></span><span class="arr">→</span><span>GVA <b id="c2">--:--</b></span></div>
+  <a class="mail" href="mailto:bryanigizarda@gmail.com">bryanigizarda@gmail.com</a>
+</header>
 
-<div id="boot" class="screen on" role="button" tabindex="0" aria-label="Démarrage, appuyez pour continuer">
-  <div class="logo">AN</div>
-  <div>Arda Nigiz</div>
-  <div style="color:#aaa">Démarrage du portfolio…</div>
-  <div class="bar"><i></i></div>
-</div>
-
-<div id="login" class="screen">
-  <div class="top"></div>
-  <div class="mid">
-    <div class="left"><div class="logo">AN</div><div class="brand">Arda Nigiz</div><p>Pour commencer, cliquez sur votre nom d'utilisateur</p></div>
-    <div class="sep"></div>
-    <div class="right"><button class="user" id="user" type="button"><span class="av">👤</span><span><b>Arda</b>Portfolio</span></button></div>
+<section class="hero" id="accueil">
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="hero-txt">
+    <p class="kicker">Portfolio · 2026</p>
+    <h1>Arda Nigiz.<br>Monteur vidéo,<br><mark>futur pentester.</mark></h1>
+    <p class="lead">Étudiant en Bachelor Cybersécurité à l'ESGI Paris. Je cherche une alternance dès <b>janvier 2027</b>.</p>
+    <p class="hint" id="hint">Clique sur les anneaux.</p>
   </div>
-  <div class="bottom"><button class="shut" id="shut" type="button"><span>⏻</span>Arrêter l'ordinateur</button><div class="hint">Une fois la session ouverte, double-cliquez sur les icônes du bureau pour explorer le portfolio.</div></div>
-</div>
+  <footer class="links">
+    <a href="CV_Arda_Nigiz.pdf" download>CV (PDF)</a>
+    <a href="https://github.com/tjrardaa" target="_blank" rel="noopener">GitHub</a>
+    <a href="mailto:bryanigizarda@gmail.com">E-mail</a>
+    <span class="tc" id="tc" aria-hidden="true">TC 00:00:00:00</span>
+  </footer>
+</section>
 
-<main id="desktop" aria-label="Bureau"></main>
+<main>
+<section id="parcours" class="sec">
+  <h2><span>01</span> Parcours</h2>
+  <p class="sub">Comme sur une timeline de montage : chaque plan a sa durée.</p>
+  <ol class="tl">
+    <li class="reveal"><time>2023</time><div><b>Bac professionnel microtechniques</b><p>Un premier pas dans la technique et l'électronique.</p></div></li>
+    <li class="reveal"><time>2023 – 2025</time><div><b>BUT MMI, développement web</b><p>IUT de Cergy-Pontoise. 2 années validées : web, bases de données, réseaux.</p></div></li>
+    <li class="reveal"><time>Janv. 2025 →</time><div><b>Monteur vidéo, auto-entrepreneur</b><p>Montage et livraison de vidéos YouTube et TikTok. Relation client, délais, autonomie.</p></div></li>
+    <li class="reveal now"><time>Janv. 2027</time><div><b>Bachelor Cybersécurité, ESGI Paris</b><p>3<sup>e</sup> année en alternance : 3 semaines en entreprise, 1 semaine à l'école.</p></div></li>
+  </ol>
+</section>
 
-<div id="menu" role="menu">
-  <div class="side">Arda Nigiz</div>
-  <div class="list" id="mlist"></div>
-</div>
+<section id="projets" class="sec">
+  <h2><span>02</span> Projets</h2>
+  <div class="cards">
+    <article class="card reveal"><span class="tag">C# · Unity</span><h3>Jeu de plateforme 2D</h3><p>Projet de groupe à deux. Déplacements du joueur, ennemis, gestion des scènes et du son, événements par ScriptableObjects.</p></article>
+    <article class="card reveal"><span class="tag">PHP · MySQL</span><h3>Site dynamique</h3><p>Projet de groupe à quatre (BUT MMI). J'ai réalisé le back-office : articles, auteurs, messages, connexion.</p></article>
+    <article class="card reveal"><span class="tag">HTML · CSS · JS</span><h3>Ce portfolio</h3><p>Une scène 3D en WebGL, sans framework, pensée pour rester légère sur tous les écrans.</p></article>
+    <article class="card reveal ghost"><span class="tag">Bientôt</span><h3>Premiers write-ups</h3><p>Mes comptes-rendus de challenges (TryHackMe, Root-Me) arriveront ici, un par un.</p></article>
+  </div>
+</section>
 
-<div id="task">
-  <button class="start" id="startBtn" type="button" aria-haspopup="true" aria-label="Démarrer"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M1 4C3.5 2.6 6 5 9 3.6V9C6 10.4 3.5 8 1 9.4Z" fill="#f25022"/><path d="M10.5 3.4C13.5 2 16 4.4 19 3V8.6C16 10 13.5 7.6 10.5 9Z" fill="#7fba00"/><path d="M1 10.8C3.5 9.4 6 11.8 9 10.4V16C6 17.4 3.5 15 1 16.4Z" fill="#00a4ef"/><path d="M10.5 10.2C13.5 8.8 16 11.2 19 9.8V15.4C16 16.8 13.5 14.4 10.5 15.8Z" fill="#ffb900"/></svg><span>démarrer</span></button>
-  <div class="apps" id="apps"></div>
-  <div id="clock"></div>
-</div>
+<section id="competences" class="sec">
+  <h2><span>03</span> Compétences</h2>
+  <div class="skills">
+    <div class="reveal"><h3>Développement</h3><ul><li>HTML</li><li>CSS</li><li>JavaScript</li><li>PHP</li><li>Python</li><li>C#</li><li>Lua</li><li>SQL (MySQL)</li></ul></div>
+    <div class="reveal"><h3>Systèmes &amp; réseaux</h3><ul><li>Linux (bases)</li><li>VirtualBox</li><li>Docker</li><li>Modèle OSI</li><li>TCP/IP</li><li>Packet Tracer</li><li>SSH</li></ul></div>
+    <div class="reveal"><h3>Outils</h3><ul><li>Git / GitHub</li><li>VS Code</li><li>PuTTY</li><li>Premiere Pro</li><li>After Effects</li><li>Photoshop</li></ul></div>
+    <div class="reveal"><h3>Langues</h3><ul><li>Français</li><li>Turc (langue maternelle)</li><li>Anglais B2</li></ul></div>
+  </div>
+</section>
 
+<section id="programme" class="sec">
+  <h2><span>04</span> Mon programme d'ici janvier</h2>
+  <p class="sub">La cybersécurité, ça se pratique. Voici où j'en suis, mis à jour au fil de l'eau.</p>
+  <ul class="log">
+    <li class="reveal" data-s="doing"><i></i>OverTheWire Bandit : niveaux 0 à 10 <em>en cours</em></li>
+    <li class="reveal" data-s="todo"><i></i>TryHackMe : Pre Security (gratuit) <em>à faire</em></li>
+    <li class="reveal" data-s="todo"><i></i>Root-Me : premiers challenges web <em>à faire</em></li>
+    <li class="reveal" data-s="todo"><i></i>Home lab : Kali Linux dans VirtualBox <em>à faire</em></li>
+    <li class="reveal" data-s="todo"><i></i>Un write-up par semaine sur GitHub <em>à faire</em></li>
+  </ul>
+</section>
+
+<section id="contact" class="sec contact">
+  <h2><span>05</span> Contact</h2>
+  <p class="big">Une alternance à proposer, en cybersécurité, réseaux ou systèmes, en Île-de-France ?</p>
+  <a class="cta" href="mailto:bryanigizarda@gmail.com">bryanigizarda@gmail.com</a>
+  <p class="row"><a href="CV_Arda_Nigiz.pdf" download>Télécharger mon CV</a><a href="https://github.com/tjrardaa" target="_blank" rel="noopener">github.com/tjrardaa</a></p>
+</section>
+</main>
+<footer class="end">Arda Nigiz · Créteil · fait main en HTML, CSS et JavaScript</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
