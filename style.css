@@ -156,12 +156,11 @@ body.is-open #peek{opacity:0}
 .b5{left:196vw;top:2vh;width:34vw;height:34vw;background:var(--cobalt)}
 .b6{left:232vw;top:50vh;width:32vw;height:32vw;background:var(--mint)}
 #bg .glow{position:absolute;inset:0;background:radial-gradient(520px circle at var(--mx) var(--my),var(--glow),transparent 62%)}
-.panel{isolation:isolate}
-.panel[data-num]::before{content:attr(data-num);position:absolute;z-index:-1;right:4vw;bottom:70px;font:800 clamp(180px,30vw,460px)/.8 "Bricolage Grotesque",sans-serif;letter-spacing:-.06em;color:transparent;-webkit-text-stroke:2px var(--ghost);pointer-events:none}
 .theme{pointer-events:auto;width:36px;height:36px;border-radius:50%;border:2px solid var(--ink);background:var(--card);display:grid;place-items:center;margin-left:16px;flex:none;transition:background .2s,transform .3s}
 .theme:hover{transform:rotate(18deg);background:var(--sun);color:#12141f}
 .theme .sun{display:none}
 :root[data-theme=dark] .theme .moon{display:none}:root[data-theme=dark] .theme .sun{display:block}
 .top .links{margin-left:auto}
-@media (max-width:900px){.top .theme{margin-left:auto}.panel[data-num]::before{font-size:46vw;bottom:90px}}
-body,.pcard,.report,.chip,.step,.theme{transition:background-color .35s,color .35s,border-color .35s}
+@media (max-width:900px){.top .theme{margin-left:auto}body{transition:background-color .35s,color .35s}
+
+#bg .gh{position:absolute;left:calc((var(--i) + 1) * 100vw - 4vw);bottom:70px;font:800 clamp(180px,30vw,460px)/.8 "Bricolage Grotesque",sans-serif;letter-spacing:-.06em;color:transparent;-webkit-text-stroke:2px var(--ghost);transform:translate3d(calc(var(--sx) * -1px),0,0) translateX(-100%);will-change:transform;white-space:nowrap}

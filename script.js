@@ -31,7 +31,7 @@ addEventListener('wheel',e=>{
   if(modal||e.ctrlKey)return;
   const m=e.deltaMode===1?32:e.deltaMode===2?innerHeight:1,dx=e.deltaX*m,dy=e.deltaY*m;
   const p=e.target.closest&&e.target.closest('.panel');
-  if(p&&Math.abs(dy)>Math.abs(dx)&&p.scrollHeight>p.clientHeight+2){
+  if(p&&Math.abs(dy)>Math.abs(dx)&&p.scrollHeight>p.clientHeight+24){
     if((dy>0&&p.scrollTop+p.clientHeight<p.scrollHeight-1)||(dy<0&&p.scrollTop>0))return}
   e.preventDefault();
   const now=performance.now(),gap=now-lastW;lastW=now;
