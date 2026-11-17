@@ -10,6 +10,8 @@ const FILES = {
 }
 const APP_ALIASES = { cv: 'cv', projets: 'projects', projects: 'projects', trophees: 'trophies', trophies: 'trophies', contact: 'contact', apropos: 'about', about: 'about', terminal: 'terminal' }
 
+const PROMPT = 'C:\\ARDA>'
+
 const HELP = [
   ['help', 'cette aide'],
   ['whoami', 'qui je suis'],
@@ -24,7 +26,11 @@ const HELP = [
 
 export default function Terminal({ openApp, onExit, night, setNight }) {
   const [lines, setLines] = useState([
-    { t: 'ArdaOS terminal. Tape help pour la liste des commandes.', c: 'text-[#9b9a93]' },
+    { t: 'ArdaOS XP [version 5.1.2600]', c: 'text-[#c0c0c0]' },
+    { t: '(C) Copyright 2026 Arda Nigiz.', c: 'text-[#c0c0c0]' },
+    { t: '', c: '' },
+    { t: 'Tape help pour la liste des commandes.', c: 'text-[#9b9a93]' },
+    { t: '', c: '' },
   ])
   const [val, setVal] = useState('')
   const [hist, setHist] = useState([])
@@ -39,7 +45,7 @@ export default function Terminal({ openApp, onExit, night, setNight }) {
 
   const run = (raw) => {
     const cmd = raw.trim()
-    setLines((l) => [...l, { t: `arda@ardaos:~$ ${cmd}`, c: 'text-white' }])
+    setLines((l) => [...l, { t: `${PROMPT}${cmd}`, c: 'text-white' }])
     if (!cmd) return
     setHist((h) => [cmd, ...h].slice(0, 50))
     const [name, ...args] = cmd.split(/\s+/)
@@ -117,12 +123,12 @@ export default function Terminal({ openApp, onExit, night, setNight }) {
   }
 
   return (
-    <div className="h-full bg-[#0b0d14] text-[#d6d3c9] text-[16px] leading-6 p-4 os-scroll overflow-auto" onClick={() => inputRef.current?.focus({ preventScroll: true })}>
+    <div className="xp-cmd flex-1 min-h-0 bg-black text-[#c0c0c0] text-[14px] leading-5 p-2 os-scroll overflow-auto" onClick={() => inputRef.current?.focus({ preventScroll: true })}>
       {lines.map((l, i) => <div key={i} className={`whitespace-pre-wrap ${l.c}`}>{l.t || ' '}</div>)}
       <div className="flex">
-        <span className="text-[#35d6a3] shrink-0">arda@ardaos:~$&nbsp;</span>
+        <span className="text-[#c0c0c0] shrink-0 whitespace-pre">{PROMPT}</span>
         <input ref={inputRef} value={val} onChange={(e) => setVal(e.target.value)} onKeyDown={onKey}
-          className="flex-1 bg-transparent outline-none text-white caret-[#ff5a36]" spellCheck={false} autoComplete="off" aria-label="Commande" />
+          className="flex-1 bg-transparent outline-none text-white caret-white xp-cmd" spellCheck={false} autoComplete="off" aria-label="Commande" />
       </div>
       <div ref={endRef} />
     </div>

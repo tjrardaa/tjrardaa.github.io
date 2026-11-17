@@ -1,8 +1,9 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
-import { useLoader } from '@react-three/fiber'
+import { useFrame, useLoader, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useHover } from './hover'
+import Petals from './Petals'
 import ScreenSync from './ScreenSync'
 import { SCREEN_W } from '../os/OS'
 
@@ -13,6 +14,8 @@ export const MODEL_URL = `${BASE}models/bureau.glb`
 const ATLAS = ['A1_desk', 'A2_computer', 'A3_items', 'A4_props', 'A5_floor']
 const NIGHT_URLS = ATLAS.map((a) => `${BASE}models/night/${a}.webp`)
 const BULB = [0, 1.78, -0.02] // centre de l'ampoule (repère three.js)
+const PIVOT = [0, 4.15, -0.02] // haut du fil : point d'attache de l'ampoule
+const TREE_BASE = [-1.85, 0.35, -0.35] // pied du cerisier
 
 useGLTF.preload(MODEL_URL)
 
@@ -69,6 +72,7 @@ export default function Room({ night, view, setView, setNight, onHover }) {
   const { nodes, materials } = useGLTF(MODEL_URL)
   const nightTex = useLoader(THREE.TextureLoader, NIGHT_URLS)
   const screen = useScreenInfo()
+  const clock = useThree((s) => s.clock)
   const glow = useGlow()
   const active = view === 'screen'
 
@@ -92,9 +96,12 @@ export default function Room({ night, view, setView, setNight, onHover }) {
   const props = useMemo(() => {
     const tree = []
     const bulb = {}
+    // le matériau d'origine du .glb est gardé dans userData : si ce calcul est refait (rechargement à chaud,
+    // remontage du composant), on repart toujours de l'original et non d'un matériau déjà remplacé
+    const original = (o) => (o.userData.src ??= o.material)
     nodes.Tree.traverse((o) => {
       if (!o.isMesh) return
-      const src = o.material
+      const src = original(o)
       const m = new THREE.MeshBasicMaterial({ map: src.map, toneMapped: false, side: THREE.DoubleSide })
       if (src.name.startsWith('Sakura')) { m.alphaTest = 0.5 }
       o.material = m
@@ -102,7 +109,7 @@ export default function Room({ night, view, setView, setNight, onHover }) {
     })
     nodes.Bulb.traverse((o) => {
       if (!o.isMesh) return
-      const src = o.material
+      const src = original(o)
       if (src.name === 'lightbulb_01_glass') {
         o.material = bulb.glass = new THREE.MeshBasicMaterial({ map: src.map, transparent: true, depthWrite: false, toneMapped: false })
       } else {
@@ -121,7 +128,8 @@ export default function Room({ night, view, setView, setNight, onHover }) {
     // matériaux cuits sur tous les maillages concernés
     Object.values(nodes).forEach((n) => n.traverse?.((o) => {
       if (!o.isMesh) return
-      const b = Object.values(baked).find((x) => x.name === o.material.name)
+      o.userData.src ??= o.material
+      const b = Object.values(baked).find((x) => x.name === o.userData.src.name)
       if (b) o.material = b.mat
     }))
   }, [nodes, baked])
@@ -132,6 +140,38 @@ export default function Room({ night, view, setView, setNight, onHover }) {
     props.tree.forEach((m) => m.color.set(night ? '#2a2630' : '#ffffff'))
     if (props.bulb.glass) props.bulb.glass.color.setRGB(night ? 2.4 : 1, night ? 1.8 : 1, night ? 0.9 : 1)
   }, [night, baked, props])
+
+  // l'ampoule est suspendue à son fil : au clic elle se balance puis s'arrête
+  const swing = useRef(null)
+  const swingGroup = useRef()
+  const treeGroup = useRef()
+  useEffect(() => {
+    nodes.Bulb.position.set(-PIVOT[0], -PIVOT[1], -PIVOT[2])
+    nodes.Tree.position.set(-TREE_BASE[0], -TREE_BASE[1], -TREE_BASE[2])
+  }, [nodes])
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime
+    const g = swingGroup.current
+    if (g) {
+      const s = swing.current
+      if (s) {
+        const k = t - s.t0
+        if (k > 6) { swing.current = null; g.rotation.set(0, 0, 0) }
+        else {
+          // pendule amorti : ~3,2 s par aller-retour, il s'éteint en 5 secondes environ
+          const a = 0.085 * Math.exp(-0.95 * k) * Math.sin((2 * Math.PI * k) / 3.2)
+          g.rotation.set(a * 0.35, 0, a)
+        }
+      }
+    }
+    // le feuillage bouge par à-coups, comme une animation à faible fréquence d'images
+    const tg = treeGroup.current
+    if (tg) {
+      const q = Math.round(t / 0.14) * 0.14
+      tg.rotation.z = 0.012 * Math.sin(q * 1.7) + (Math.sin(q * 11) > 0.97 ? 0.012 : 0)
+      tg.rotation.x = 0.006 * Math.sin(q * 1.1 + 1)
+    }
+  })
 
   const enter = (e) => { e.stopPropagation(); if (!active) setView('screen') }
   const tip = (k) => (active ? null : TIPS[k])
@@ -154,23 +194,29 @@ export default function Room({ night, view, setView, setNight, onHover }) {
       <Hot object={nodes.Vinyls} text={tip('Vinyls')} onHover={onHover} />
       <Hot object={nodes.PaperPiles} text={tip('PaperPiles')} onHover={onHover} />
       <Hot object={nodes.Pot} text={tip('Tree')} onHover={onHover} />
-      <Hot object={nodes.Tree} text={tip('Tree')} onHover={onHover} />
+      <group ref={treeGroup} position={TREE_BASE}>
+        <Hot object={nodes.Tree} text={tip('Tree')} onHover={onHover} />
+      </group>
+      <Petals night={night} />
       <Hot object={nodes.Leaves} text={tip('Leaves')} onHover={onHover} />
 
       <ScreenSync mesh={nodes.Screen} position={screen.center} size={screen.size} pxWidth={SCREEN_W}
         onClick={enter} hover={{ onPointerOver: (e) => { e.stopPropagation(); onHover?.(tip('Screen')) }, onPointerOut: () => onHover?.(null) }} />
 
-      {/* ampoule : clic = jour / nuit */}
-      <primitive object={nodes.Bulb} />
-      <group position={BULB} onClick={(e) => { e.stopPropagation(); setNight(!night) }} {...hBulb}>
-        <mesh visible={false}>
-          <sphereGeometry args={[0.16, 8, 8]} />
-        </mesh>
+      {/* ampoule : clic = jour / nuit, et elle se balance un instant au bout de son fil */}
+      <group ref={swingGroup} position={PIVOT}>
+        <primitive object={nodes.Bulb} />
+        <group position={[BULB[0] - PIVOT[0], BULB[1] - PIVOT[1], BULB[2] - PIVOT[2]]}
+          onClick={(e) => { e.stopPropagation(); swing.current = { t0: clock.elapsedTime }; setNight(!night) }} {...hBulb}>
+          <mesh visible={false}>
+            <sphereGeometry args={[0.16, 8, 8]} />
+          </mesh>
+          <sprite scale={[0.95, 0.95, 0.95]} renderOrder={3} raycast={() => null}>
+            <spriteMaterial map={glow} color="#ffc060" blending={THREE.AdditiveBlending} depthWrite={false} transparent
+              opacity={night ? 0.9 : 0} toneMapped={false} />
+          </sprite>
+        </group>
       </group>
-      <sprite position={BULB} scale={[0.95, 0.95, 0.95]} renderOrder={3}>
-        <spriteMaterial map={glow} color="#ffc060" blending={THREE.AdditiveBlending} depthWrite={false} transparent
-          opacity={night ? 0.9 : 0} toneMapped={false} />
-      </sprite>
     </group>
   )
 }

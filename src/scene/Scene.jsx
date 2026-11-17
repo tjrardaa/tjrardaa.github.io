@@ -7,12 +7,13 @@ import Room, { useScreenInfo } from './Room'
 const FOV = 38
 // Vue d'ensemble (repère three.js) et vue d'intro, plus éloignée, avant le clic sur START
 const ROOM_VIEW = { pos: [3.5, 2.3, 5.2], target: [0.1, 0.8, 0.1] }
-const INTRO_VIEW = { pos: [7.4, 5.2, 11.2], target: [0.1, 1.2, 0.1] }
+// l'intro démarre à gauche : après START la caméra glisse de gauche à droite jusqu'au bureau
+const INTRO_VIEW = { pos: [-8.5, 4.6, 8.2], target: [0.1, 1.1, 0.1] }
 
 function Rig({ view, started }) {
   const ref = useRef()
   const intro = useRef(true)
-  const { size } = useThree()
+  const { size, clock } = useThree()
   const screen = useScreenInfo()
   useEffect(() => {
     const c = ref.current
@@ -40,8 +41,26 @@ function Rig({ view, started }) {
     }
   }, [view, started, size.width, size.height, screen])
   const room = view === 'room' && started
+
+  // La caméra balaie lentement la pièce de gauche à droite et revient (±6°, un aller-retour toutes les 20 s).
+  // Elle s'arrête tant qu'on manipule la vue, et reprend quelques secondes après.
+  const touching = useRef(false)
+  const lastTouch = useRef(-10)
+  const sweep = useRef({ prev: 0, ready: false })
+  useFrame(({ clock }) => {
+    const c = ref.current
+    if (!c) return
+    const t = clock.elapsedTime
+    if (!room || touching.current || t - lastTouch.current < 3) { sweep.current.ready = false; return }
+    const a = 0.105 * Math.sin((2 * Math.PI * t) / 20)
+    if (!sweep.current.ready) { sweep.current.prev = a; sweep.current.ready = true; return }
+    c.rotate(a - sweep.current.prev, 0, false)
+    sweep.current.prev = a
+  })
   return (
     <CameraControls ref={ref} makeDefault smoothTime={1.6}
+      onStart={() => { touching.current = true }}
+      onEnd={() => { touching.current = false; lastTouch.current = clock.elapsedTime }}
       enabled={room}
       minDistance={2.4} maxDistance={14}
       minPolarAngle={0.5} maxPolarAngle={1.45}
