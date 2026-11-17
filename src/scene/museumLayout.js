@@ -1,18 +1,18 @@
-﻿// Disposition du musée (identique à Blender) : calcul des vues de caméra pour chaque pièce.
+// Disposition du musée (identique à Blender) : calcul des vues de caméra pour chaque pièce.
 // Repère Blender (x, y, z haut) -> three.js (x, z, -y).
-const R = 5.0
-const LOOK = { x: 0, y: -3.4 } // les pièces sont tournées vers ce point, devant le bureau
+const R = 6.2
+const LOOK = { x: 2.0, y: -5.0 } // les pièces sont tournées vers ce point, devant le bureau
 
 // angle (degrés, repère Blender), hauteur visée, distance de la caméra, décalage latéral du point visé
 const SPOTS = {
-  St_projecteur: { deg: 190, ty: 1.0, dist: 2.9 },
-  St_musique: { deg: 170, ty: 1.0, dist: 2.9 },
-  St_jeux: { deg: 150, ty: 1.0, dist: 2.9 },
-  St_voyages: { deg: 130, ty: 1.3, dist: 3.0 },
-  St_weplay: { deg: 50, ty: 1.05, dist: 3.1 },
-  St_reseau: { deg: 30, ty: 1.15, dist: 3.0 },
-  St_linux: { deg: 10, ty: 1.2, dist: 3.4 },
-  St_trophees: { deg: -10, ty: 0.9, dist: 3.7 },
+  St_projecteur: { deg: 203, ty: 1.0, dist: 2.9 },
+  St_musique: { deg: 181, ty: 1.0, dist: 2.9 },
+  St_jeux: { deg: 159, ty: 1.0, dist: 2.9 },
+  St_voyages: { deg: 137, ty: 1.3, dist: 3.0 },
+  St_weplay: { deg: 43, ty: 1.05, dist: 3.1 },
+  St_reseau: { deg: 21, ty: 1.15, dist: 3.0 },
+  St_linux: { deg: -1, ty: 1.2, dist: 3.4 },
+  St_trophees: { deg: -23, ty: 0.9, dist: 3.7 },
 }
 
 export function stopCamera(node, mobile) {
