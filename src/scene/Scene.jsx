@@ -84,7 +84,7 @@ function Parallax({ active, children }) {
 export default function Scene({ night, setNight, view, setView, started, onHover }) {
   const bg = night ? '#07080c' : '#f4f1ea'
   return (
-    <Canvas dpr={[1, 2]} camera={{ fov: FOV, position: INTRO_VIEW.pos, near: 0.05, far: 80 }} gl={{ antialias: true }}
+    <Canvas dpr={[1, 2]} camera={{ fov: FOV, position: INTRO_VIEW.pos, near: 0.2, far: 80 }} gl={{ antialias: true }}
       onPointerMissed={() => onHover(null)}>
       <color attach="background" args={[bg]} />
       <Suspense fallback={null}>
