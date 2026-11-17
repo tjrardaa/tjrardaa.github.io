@@ -104,3 +104,106 @@ export const TROPHIES = [
   { name: 'Lab PortSwigger', desc: 'Un premier lab Web Security Academy.' },
   { name: 'Alternance signée', desc: 'Le plus important.' },
 ]
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MUSÉE : tout le texte du musée se modifie ici (survol, cartes, visite guidée).
+// L'ordre du tableau est l'ordre de la visite guidée.
+//   node    : nom du mesh dans public/models/musee.glb (ne pas changer)
+//   hover   : petit message quand on survole l'objet
+//   title / text / stat / links : contenu de la carte qui s'ouvre au clic
+//   project : id d'un projet de PROJECTS (le bouton « Voir dans l'ordinateur » l'ouvre dans l'écran du PC)
+// Tous les textes ci-dessous sont PROVISOIRES : à réécrire (chercher TODO).
+// ─────────────────────────────────────────────────────────────────────────────
+export const MUSEUM = [
+  {
+    id: 'cinema', node: 'St_projecteur', group: 'Passion',
+    title: 'Cinéma & montage', // TODO
+    hover: 'Un vieux projecteur et un clap. Silence, on tourne. (TODO)', // TODO
+    text: [
+      'TODO : parle de ton goût pour le cinéma et le montage vidéo.',
+      'TODO : mentionne ce que le BUT MMI t’a appris (tournage, montage, motion).',
+    ],
+    links: [],
+  },
+  {
+    id: 'musique', node: 'St_musique', group: 'Passion',
+    title: 'Musique', // TODO
+    hover: 'Une platine vinyle. Le son qui accompagne le code. (TODO)', // TODO
+    text: [
+      'TODO : ce que tu écoutes quand tu travailles ou que tu révises.',
+      'TODO : une anecdote sur les vinyles de ton bureau.',
+    ],
+    links: [],
+  },
+  {
+    id: 'jeux', node: 'St_jeux', group: 'Passion',
+    title: 'Jeux vidéo', // TODO
+    hover: 'Une console et une manette. Pour la recherche de bugs, évidemment. (TODO)', // TODO
+    text: [
+      'TODO : tes jeux préférés et ce qu’ils t’ont donné envie d’apprendre.',
+      'TODO : lien avec ton projet Unity.',
+    ],
+    links: [],
+  },
+  {
+    id: 'voyages', node: 'St_voyages', group: 'Passion',
+    title: 'Voyages', // TODO
+    hover: 'Un avion miniature. Destination : la frontière suisse. (TODO)', // TODO
+    text: [
+      'TODO : un voyage qui t’a marqué.',
+      'TODO : pourquoi voyager et travailler près d’une frontière te plaît.',
+    ],
+    links: [],
+  },
+  {
+    id: 'weplay', node: 'St_weplay', group: 'Parcours',
+    title: 'WePlayForCharity', // TODO
+    hover: 'Une photo sur son chevalet. L’image qui compte. (TODO)', // TODO
+    stat: '69 685 € récoltés sur la dernière édition', // chiffre donné, pas de total général
+    text: [
+      'TODO : explique ce qu’est WePlayForCharity et ton rôle.',
+      'TODO : ce que tu y as appris (organisation, technique, équipe).',
+    ],
+    links: [], // TODO : { label: 'Voir le site', href: 'https://…' }
+  },
+  {
+    id: 'reseau', node: 'St_reseau', group: 'Parcours', project: 'reseau',
+    title: 'Réseau', // TODO
+    hover: 'Un switch, un routeur et des câbles bleus. Tout est branché, promis. (TODO)', // TODO
+    text: [
+      'TODO : ce que tu sais faire en réseau (adressage IP, routage, DHCP, DNS).',
+      'TODO : tes labs Cisco Packet Tracer.',
+    ],
+    links: [],
+  },
+  {
+    id: 'linux', node: 'St_linux', group: 'Parcours', project: 'linux',
+    title: 'Linux', // TODO
+    hover: 'Une baie serveur. Les LED clignotent, donc tout va bien. (TODO)', // TODO
+    text: [
+      'TODO : tes serveurs Ubuntu et ce que tu y héberges.',
+      'TODO : SSH, MariaDB, administration au quotidien.',
+    ],
+    links: [],
+  },
+  {
+    id: 'trophees', node: 'St_trophees', group: 'Parcours',
+    title: 'Trophées', // TODO
+    hover: 'Une vitrine. Les coupes dorées sont gagnées, les autres arrivent. (TODO)', // TODO
+    text: [
+      'Les coupes dorées sont débloquées, les autres sont verrouillées. Elles viennent de la liste TROPHIES.',
+      'TODO : une phrase sur ta façon de progresser (Bandit, TryHackMe, Root-Me…).',
+    ],
+    links: [],
+  },
+  {
+    id: 'suisse', node: 'Door', group: 'Objectif',
+    title: 'Direction la Suisse', // TODO
+    hover: 'Une porte entrouverte. La lumière vient de l’autre côté. (TODO)', // TODO
+    text: [
+      'Mon objectif : une alternance en support IT, systèmes ou réseaux, à la frontière suisse.',
+      'TODO : précise la région, la date de début (janvier 2027) et ce que tu cherches.',
+    ],
+    links: [], // TODO : { label: 'Me contacter', href: 'mailto:…' }
+  },
+]

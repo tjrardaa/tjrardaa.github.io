@@ -3,6 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { CameraControls } from '@react-three/drei'
 import * as THREE from 'three'
 import Room, { useScreenInfo } from './Room'
+import Museum from './Museum'
 
 const FOV = 38
 // Vue d'ensemble (repère three.js) et vue d'intro, plus éloignée, avant le clic sur START
@@ -10,11 +11,12 @@ const ROOM_VIEW = { pos: [3.5, 2.3, 5.2], target: [0.1, 0.8, 0.1] }
 // l'intro démarre à gauche : après START la caméra glisse de gauche à droite jusqu'au bureau
 const INTRO_VIEW = { pos: [-8.5, 4.6, 8.2], target: [0.1, 1.1, 0.1] }
 
-function Rig({ view, started }) {
+function Rig({ view, started, focus }) {
   const ref = useRef()
   const intro = useRef(true)
   const { size, clock } = useThree()
   const screen = useScreenInfo()
+  const focusKey = focus ? focus.pos.join() + '|' + focus.target.join() : ''
   useEffect(() => {
     const c = ref.current
     if (!c) return
@@ -25,7 +27,11 @@ function Rig({ view, started }) {
     // le premier trajet (après START) est plus lent : la caméra descend vers le bureau
     c.smoothTime = intro.current ? 1.6 : 0.55
     intro.current = false
-    if (view === 'screen') {
+    if (focus && view === 'room') {
+      // une pièce du musée est visée (clic ou visite guidée) : la caméra s'approche en douceur
+      c.smoothTime = 0.9
+      c.setLookAt(...focus.pos, ...focus.target, true)
+    } else if (view === 'screen') {
       // distance pour que l'écran remplisse la vue, quelle que soit la forme de la fenêtre
       const [cx, cy, cz] = screen.center
       const t = Math.tan(THREE.MathUtils.degToRad(FOV / 2))
@@ -39,8 +45,9 @@ function Rig({ view, started }) {
       const [x, y, z] = ROOM_VIEW.pos, [tx, ty, tz] = ROOM_VIEW.target
       c.setLookAt(tx + (x - tx) * k, ty + (y - ty) * k, tz + (z - tz) * k, tx, ty, tz, true)
     }
-  }, [view, started, size.width, size.height, screen])
-  const room = view === 'room' && started
+    // eslint-disable-next-line
+  }, [view, started, size.width, size.height, screen, focusKey])
+  const room = view === 'room' && started && !focus
 
   // La caméra balaie lentement la pièce de gauche à droite et revient (±6°, un aller-retour toutes les 20 s).
   // Elle s'arrête tant qu'on manipule la vue, et reprend quelques secondes après.
@@ -81,16 +88,22 @@ function Parallax({ active, children }) {
   return <group ref={g}>{children}</group>
 }
 
-export default function Scene({ night, setNight, view, setView, started, onHover }) {
+export default function Scene({ night, setNight, view, setView, started, onHover, focus, stop, onSelect, onMissed, onMuseumReady }) {
   const bg = night ? '#07080c' : '#f4f1ea'
   return (
     <Canvas dpr={[1, 2]} camera={{ fov: FOV, position: INTRO_VIEW.pos, near: 0.2, far: 80 }} gl={{ antialias: true }}
-      onPointerMissed={() => onHover(null)}>
+      onPointerMissed={() => { onHover(null); onMissed?.() }}>
       <color attach="background" args={[bg]} />
       <Suspense fallback={null}>
-        <Rig view={view} started={started} />
-        <Parallax active={view === 'room' && started}>
+        <Rig view={view} started={started} focus={focus} />
+        <Parallax active={view === 'room' && started && !focus}>
           <Room night={night} setNight={setNight} view={view} setView={setView} onHover={onHover} />
+          {/* le musée se charge à part, après START : le bureau n'attend pas */}
+          {started && (
+            <Suspense fallback={null}>
+              <Museum night={night} selected={stop} onHover={onHover} onSelect={onSelect} onReady={onMuseumReady} />
+            </Suspense>
+          )}
         </Parallax>
       </Suspense>
     </Canvas>

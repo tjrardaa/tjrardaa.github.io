@@ -102,9 +102,8 @@ function AboutApp() {
   )
 }
 
-function ProjectsApp() {
-  const [open, setOpen] = useState(PROJECTS[0].id)
-  const p = PROJECTS.find((x) => x.id === open)
+function ProjectsApp({ open, setOpen }) {
+  const p = PROJECTS.find((x) => x.id === open) || PROJECTS[0]
   return (
     <>
       <div className="xp-menubar"><span>Fichier</span><span>Edition</span><span>Affichage</span><span>Favoris</span><span>?</span></div>
@@ -258,7 +257,9 @@ function StartMenu({ openApp, onExit, onClose }) {
   )
 }
 
-export default function OS({ active, onExit, night, setNight, booted, setBooted }) {
+export default function OS({ active, onExit, night, setNight, booted, setBooted, request }) {
+  const [projId, setProjId] = useState(PROJECTS[0].id)
+  const pending = useRef(null) // application demandée par le musée avant la fin du démarrage
   const [wins, setWins] = useState({})
   const [top, setTop] = useState(10)
   const [focused, setFocused] = useState(null)
@@ -294,10 +295,21 @@ export default function OS({ active, onExit, night, setNight, booted, setBooted 
     else focus(id)
   }
 
-  // Au premier démarrage : ouvrir la présentation
+  // Une carte du musée demande d'ouvrir un projet dans l'ordinateur
+  useEffect(() => {
+    if (!request) return
+    setProjId(request.id)
+    if (booted) openApp(request.app)
+    else pending.current = request.app
+    // eslint-disable-next-line
+  }, [request])
+
+  // Au premier démarrage : ouvrir la présentation (ou l'application demandée par le musée)
   const bootDone = () => {
     setBooted(true)
-    setTimeout(() => { openApp('about') }, 50)
+    const app = pending.current || 'about'
+    pending.current = null
+    setTimeout(() => { openApp(app) }, 50)
   }
 
   return (
@@ -325,7 +337,7 @@ export default function OS({ active, onExit, night, setNight, booted, setBooted 
           {Object.entries(wins).map(([id, win]) => (
             <Window key={id} id={id} win={win} focus={focus} close={close} minimize={minimize} toggleMax={toggleMax} move={move} active={focused === id}>
               {id === 'about' && <AboutApp />}
-              {id === 'projects' && <ProjectsApp />}
+              {id === 'projects' && <ProjectsApp open={projId} setOpen={setProjId} />}
               {id === 'cv' && <CvApp />}
               {id === 'trophies' && <TrophiesApp />}
               {id === 'contact' && <ContactApp />}

@@ -120,7 +120,7 @@ export default function Room({ night, view, setView, setNight, onHover }) {
   }, [nodes])
 
   useEffect(() => {
-    nodes.Floor.renderOrder = -1
+    nodes.Floor.renderOrder = -2 // le sol du musée (-1) se dessine par-dessus
     nodes.Bulb.renderOrder = 2
     // le sol de la scène n'est jamais un objet à survoler
     nodes.Floor.traverse((o) => { o.raycast = () => {} })
