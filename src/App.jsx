@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import Scene from './scene/Scene'
 import Recruiter from './Recruiter'
 import ScreenLayer from './ScreenLayer'
-import OS from './os/OS'
+import Start from './Start'
+import OS, { SCREEN_W, SCREEN_H } from './os/OS'
 import { PROFILE } from './data'
+import { startAudio, setMuted, isMuted, setNightAudio, clickSound } from './audio'
 
 function readNight() {
   try {
@@ -18,15 +20,20 @@ export default function App() {
   const [view, setView] = useState('room')
   const [booted, setBooted] = useState(false)
   const [recruiter, setRecruiter] = useState(() => location.hash === '#recruteur')
+  const [started, setStarted] = useState(false)
+  const [muted, setMutedState] = useState(isMuted)
   const [tip, setTip] = useState(null)
   const [mouse, setMouse] = useState({ x: 0, y: 0 })
 
   const setNight = (v) => {
     setNightState(v)
+    clickSound()
     try { localStorage.setItem('night', v ? '1' : '0') } catch { /* rien */ }
   }
+  const toggleMute = () => { const m = !muted; setMutedState(m); setMuted(m) }
+  const start = () => { startAudio(); setNightAudio(night); setStarted(true) }
 
-  useEffect(() => { document.body.classList.toggle('night', night) }, [night])
+  useEffect(() => { document.body.classList.toggle('night', night); setNightAudio(night) }, [night])
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') { setView('room'); setTip(null) } }
     const onMove = (e) => setMouse({ x: e.clientX, y: e.clientY })
@@ -47,12 +54,13 @@ export default function App() {
   return (
     <div className="fixed inset-0">
       <ScreenLayer active={view === 'screen'}>
-        <div onClick={() => view === 'room' && setView('screen')}>
+        <div onClick={() => view === 'room' && setView('screen')} className="crt-wrap" style={{ width: SCREEN_W, height: SCREEN_H }}>
           <OS active={view === 'screen'} booted={booted} setBooted={setBooted} night={night} setNight={setNight} onExit={() => setView('room')} />
+          <div className="crt-overlay" aria-hidden="true" />
         </div>
       </ScreenLayer>
       <div className="fixed inset-0" style={{ zIndex: 2 }}>
-        <Scene night={night} setNight={setNight} view={view} setView={setView} onHover={setTip} />
+        <Scene night={night} setNight={setNight} view={view} setView={setView} started={started || recruiter} onHover={setTip} />
       </div>
 
       {/* barre du haut */}
@@ -71,6 +79,8 @@ export default function App() {
           )}
         </div>
         <div className="pointer-events-auto flex gap-2">
+          <button onClick={toggleMute} aria-label={muted ? 'Activer le son' : 'Couper le son'} aria-pressed={muted}
+            className={`btn rounded-full w-10 h-10 grid place-items-center backdrop-blur ${pill}`}>{muted ? '🔇' : '🔊'}</button>
           <button onClick={() => setNight(!night)} aria-label={night ? 'Passer en mode jour' : 'Passer en mode nuit'}
             className={`btn rounded-full w-10 h-10 grid place-items-center backdrop-blur ${pill}`}>{night ? '☀' : '☾'}</button>
           <button onClick={openRecruiter} className="btn rounded-full px-4 py-2 text-sm font-semibold bg-coral text-white shadow-sm whitespace-nowrap">Mode recruteur</button>
@@ -78,9 +88,9 @@ export default function App() {
       </header>
 
       {/* indication en bas */}
-      {view === 'room' && (
+      {view === 'room' && started && (
         <div className={`pointer-events-none fixed z-20 bottom-5 inset-x-0 text-center font-mono text-xs sm:text-sm px-4 ${fg} opacity-70`}>
-          Clique sur l’écran pour entrer · glisse pour tourner autour · clique sur l’ampoule
+          Clique sur l’écran pour entrer · bouge la souris, la caméra suit · glisse pour tourner · clique sur l’ampoule
         </div>
       )}
 
@@ -91,6 +101,7 @@ export default function App() {
       )}
 
       {recruiter && <Recruiter onClose={closeRecruiter} night={night} />}
+      {!recruiter && <Start onStart={start} onRecruiter={openRecruiter} />}
     </div>
   )
 }
