@@ -103,6 +103,27 @@ export default function Museum({ night, selected, onHover, onSelect, onReady }) 
     return () => { alive = false }
   }, [photo])
 
+  // panneau au-dessus de la porte : « Alternance 2027 », posé devant l'ancien panneau cuit dans le .glb
+  const sign = useMemo(() => {
+    const c = document.createElement('canvas')
+    c.width = 1024; c.height = 256
+    const x = c.getContext('2d')
+    x.fillStyle = '#14203f'
+    x.fillRect(0, 0, 1024, 256)
+    x.fillStyle = '#ff5a36'
+    x.fillRect(0, 0, 22, 256)
+    x.fillStyle = '#ffffff'
+    x.font = '700 104px "Bricolage Grotesque", system-ui, sans-serif'
+    x.textAlign = 'center'
+    x.textBaseline = 'middle'
+    x.fillText('Alternance 2027  →', 530, 136)
+    const t = new THREE.CanvasTexture(c)
+    t.colorSpace = THREE.SRGBColorSpace
+    t.anisotropy = 8
+    return new THREE.MeshBasicMaterial({ map: t, toneMapped: false })
+  }, [])
+  useEffect(() => { sign.color.setScalar(night ? 0.55 : 1) }, [night, sign])
+
   useEffect(() => { onReady?.() }, [onReady])
 
   // jour / nuit
@@ -129,6 +150,9 @@ export default function Museum({ night, selected, onHover, onSelect, onReady }) 
       {trophies.filter((t) => t.p).map(({ i }) => <primitive key={`p${i}`} object={nodes[`Padlock_${i}`]} />)}
       <primitive object={nodes.Photo} />
       <primitive object={nodes.Vitrine_glass} />
+      <mesh position={[0.04, 2.38, -6.835]} material={sign} raycast={() => null}>
+        <planeGeometry args={[1.04, 0.26]} />
+      </mesh>
     </group>
   )
 }

@@ -1,5 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { MUSEUM, PROJECTS } from './data'
+
+// Image d'une carte : disparaît simplement si le fichier n'a pas encore été déposé
+function CardImage({ src, alt, className }) {
+  const [ok, setOk] = useState(true)
+  if (!ok) return null
+  return <img src={`${import.meta.env.BASE_URL}${src}`} alt={alt} loading="lazy" onError={() => setOk(false)} className={className} />
+}
 
 // Carte d'une pièce du musée (à droite sur ordinateur, en bas sur téléphone) et barre de la visite guidée.
 export function MuseumCard({ stop, mobile, night, tour, onClose, onProject }) {
@@ -19,8 +26,19 @@ export function MuseumCard({ stop, mobile, night, tour, onClose, onProject }) {
         </div>
         <button onClick={onClose} aria-label="Fermer la carte" className="btn -mr-2 -mt-1 w-8 h-8 shrink-0 rounded-full grid place-items-center hover:bg-black/10">✕</button>
       </div>
+      {e.photo && <CardImage src={e.photo} alt={e.title} className="mt-3 w-full rounded-xl" />}
       {e.stat && <div className="mt-3 rounded-xl bg-coral/15 text-coral px-3 py-2 font-bold text-[15px]">{e.stat}</div>}
       {e.text.map((t, i) => <p key={i} className="mt-3 text-[14px] leading-6 opacity-90">{t}</p>)}
+      {e.album?.length > 0 && (
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {e.album.map((a) => (
+            <figure key={a.src} className="m-0">
+              <CardImage src={a.src} alt={a.place} className="aspect-[4/3] w-full rounded-lg object-cover" />
+              <figcaption className="mt-1 text-[12px] opacity-70">{a.place}</figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
       {(e.links.length > 0 || project) && (
         <div className="mt-4 flex flex-wrap gap-2">
           {e.links.map((l) => (
