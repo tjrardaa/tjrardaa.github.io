@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { PROFILE, PROJECTS, SKILLS, TROPHIES } from '../data'
 import Terminal from './Terminal'
+import { SnakeGame, MineGame } from '../games/GridGames'
+import SolitaireGame from '../games/SolitaireGame'
 import './xp.css'
 
 // Écran virtuel de 1024 x 768 affiché sur le moniteur 3D. Habillage inspiré de Windows XP (dessiné en CSS).
@@ -83,8 +85,9 @@ const APPS = {
   trophies: { title: 'Trophées', short: 'Trophées', icon: '🏆', w: 650, h: 470 },
   contact: { title: 'Contact', short: 'Contact', icon: '✉️', w: 520, h: 380 },
   terminal: { title: 'Invite de commandes', short: 'Invite de commandes', icon: '⌨️', w: 700, h: 470 },
+  games: { title: 'Salle de jeux', short: 'Jeux', icon: '🎮', w: 780, h: 620 },
 }
-const ICON_ORDER = ['about', 'projects', 'cv', 'trophies', 'contact', 'terminal']
+const ICON_ORDER = ['about', 'projects', 'cv', 'trophies', 'contact', 'terminal', 'games']
 
 function AboutApp() {
   return (
@@ -198,6 +201,34 @@ function ContactApp() {
   )
 }
 
+function GamesApp({ active }) {
+  const [game, setGame] = useState(null)
+  const games = [
+    ['snake', '🐍', 'Serpent', 'Attrape les pommes sans te mordre la queue.'],
+    ['mine', '💣', 'Démineur', 'Retrouve les cases sûres et marque les mines.'],
+    ['solitaire', '🃏', 'Solitaire', 'Range les cartes par couleur et par ordre.'],
+  ]
+  return (
+    <div className="flex flex-col h-full bg-[#ece9d8]">
+      <div className="xp-menubar"><span>Salle de jeux</span><span>Petites pauses, grandes parties</span></div>
+      {game ? <>
+        <div className="px-3 py-2 border-b border-[#aca899]"><button className="xp-btn" onClick={() => setGame(null)}>← Tous les jeux</button></div>
+        <div className="flex-1 min-h-0 overflow-auto os-scroll">
+          {game === 'snake' && <SnakeGame active={active} />}
+          {game === 'mine' && <MineGame />}
+          {game === 'solitaire' && <SolitaireGame />}
+        </div>
+      </> : <div className="p-5 overflow-auto">
+        <h2 className="text-[22px] font-bold text-[#1a3a8f]">Salle de jeux</h2>
+        <p className="text-[14px] text-[#555] mb-4">Choisis un jeu pour faire une petite pause.</p>
+        <div className="grid grid-cols-3 gap-3">{games.map(([id, icon, title, desc]) => <button key={id} onClick={() => setGame(id)} className="xp-group p-4 text-left hover:bg-white focus:outline-2 focus:outline-[#316ac5]">
+          <span className="text-[36px]">{icon}</span><span className="block font-bold text-[16px] text-[#1a3a8f] mt-2">{title}</span><span className="block text-[12px] mt-1">{desc}</span>
+        </button>)}</div>
+      </div>}
+    </div>
+  )
+}
+
 function Window({ id, win, focus, close, minimize, toggleMax, move, children, active }) {
   const drag = useRef(null)
   const onDown = (e) => {
@@ -247,7 +278,7 @@ function StartMenu({ openApp, onExit, onClose }) {
           <Item id="terminal" />
         </div>
         <div className="xp-menu-right">
-          <Item id="trophies" /><Item id="contact" />
+          <Item id="trophies" /><Item id="contact" /><Item id="games" />
         </div>
       </div>
       <div className="xp-menu-foot">
@@ -342,6 +373,7 @@ export default function OS({ active, onExit, night, setNight, booted, setBooted,
               {id === 'trophies' && <TrophiesApp />}
               {id === 'contact' && <ContactApp />}
               {id === 'terminal' && <Terminal openApp={openApp} onExit={onExit} night={night} setNight={setNight} />}
+              {id === 'games' && <GamesApp active={active && focused === id && !win.min} />}
             </Window>
           ))}
           {menu && <StartMenu openApp={openApp} onExit={onExit} onClose={() => setMenu(false)} />}
