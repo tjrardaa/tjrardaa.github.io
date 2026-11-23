@@ -1,5 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { MUSEUM, PROJECTS } from './data'
+
+// Image d'une carte : disparaît simplement si le fichier n'a pas encore été déposé
+function CardImage({ src, alt, className }) {
+  const [ok, setOk] = useState(true)
+  if (!ok) return null
+  return <img src={`${import.meta.env.BASE_URL}${src}`} alt={alt} loading="lazy" onError={() => setOk(false)} className={className} />
+}
 
 // Carte d'une pièce du musée (à droite sur ordinateur, en bas sur téléphone) et barre de la visite guidée.
 export function MuseumCard({ stop, mobile, night, tour, onClose, onProject }) {
@@ -19,8 +26,19 @@ export function MuseumCard({ stop, mobile, night, tour, onClose, onProject }) {
         </div>
         <button onClick={onClose} aria-label="Fermer la carte" className="btn -mr-2 -mt-1 w-8 h-8 shrink-0 rounded-full grid place-items-center hover:bg-black/10">✕</button>
       </div>
+      {e.photo && <CardImage src={e.photo} alt={e.title} className="mt-3 w-full rounded-xl" />}
       {e.stat && <div className="mt-3 rounded-xl bg-coral/15 text-coral px-3 py-2 font-bold text-[15px]">{e.stat}</div>}
       {e.text.map((t, i) => <p key={i} className="mt-3 text-[14px] leading-6 opacity-90">{t}</p>)}
+      {e.album?.length > 0 && (
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {e.album.map((a) => (
+            <figure key={a.src} className="m-0">
+              <CardImage src={a.src} alt={a.place} className="aspect-[4/3] w-full rounded-lg object-cover" />
+              <figcaption className="mt-1 text-[12px] opacity-70">{a.place}</figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
       {(e.links.length > 0 || project) && (
         <div className="mt-4 flex flex-wrap gap-2">
           {e.links.map((l) => (
@@ -47,17 +65,26 @@ export function TourBar({ stop, mobile, night, onPrev, onNext, onDesk, onQuit })
   // balayage gauche / droite sur téléphone
   useEffect(() => {
     if (!mobile) return
-    let x0 = null
-    const down = (e) => { x0 = e.touches[0].clientX }
+    let start = null
+    const down = (e) => {
+      if (e.touches.length !== 1) { start = null; return }
+      const touch = e.touches[0]
+      start = { id: touch.identifier, x: touch.clientX, y: touch.clientY }
+    }
+    const cancel = () => { start = null }
     const up = (e) => {
-      if (x0 === null) return
-      const dx = e.changedTouches[0].clientX - x0
-      x0 = null
-      if (Math.abs(dx) > 60) (dx < 0 ? onNext : onPrev)()
+      if (!start) return
+      const touch = Array.from(e.changedTouches).find((t) => t.identifier === start.id)
+      if (!touch) return
+      const dx = touch.clientX - start.x
+      const dy = touch.clientY - start.y
+      start = null
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) (dx < 0 ? onNext : onPrev)()
     }
     window.addEventListener('touchstart', down, { passive: true })
     window.addEventListener('touchend', up, { passive: true })
-    return () => { window.removeEventListener('touchstart', down); window.removeEventListener('touchend', up) }
+    window.addEventListener('touchcancel', cancel, { passive: true })
+    return () => { window.removeEventListener('touchstart', down); window.removeEventListener('touchend', up); window.removeEventListener('touchcancel', cancel) }
   }, [mobile, onNext, onPrev])
   return (
     <nav aria-label="Visite guidée" className={`fixed z-40 bottom-4 inset-x-3 mx-auto w-fit max-w-full flex items-center gap-2 rounded-full px-2 py-2 shadow-xl backdrop-blur ${bar}`}>

@@ -112,98 +112,110 @@ export const TROPHIES = [
 //   hover   : petit message quand on survole l'objet
 //   title / text / stat / links : contenu de la carte qui s'ouvre au clic
 //   project : id d'un projet de PROJECTS (le bouton « Voir dans l'ordinateur » l'ouvre dans l'écran du PC)
-// Tous les textes ci-dessous sont PROVISOIRES : à réécrire (chercher TODO).
+//   photo   : image affichée en haut de la carte (fichier dans public/images/)
+//   album   : photos affichées dans la carte, avec le lieu en légende (fichiers dans public/images/voyages/)
 // ─────────────────────────────────────────────────────────────────────────────
 export const MUSEUM = [
   {
     id: 'cinema', node: 'St_projecteur', group: 'Passion',
-    title: 'Cinéma & montage', // TODO
-    hover: 'Un vieux projecteur et un clap. Silence, on tourne. (TODO)', // TODO
+    title: 'Cinéma & montage',
+    hover: 'Un projecteur et un clap. Moteur… action !',
     text: [
-      'TODO : parle de ton goût pour le cinéma et le montage vidéo.',
-      'TODO : mentionne ce que le BUT MMI t’a appris (tournage, montage, motion).',
+      'Petit, je voulais tout filmer. J’avais ma chaîne YouTube et j’y postais des sketchs en me prenant pour le prochain Gad Elmaleh.',
+      'En grandissant, je suis tombé amoureux de la vidéo et de la photo. J’ai ensuite monté des vidéos pour des influenceurs à plusieurs millions d’abonnés. Ça marchait bien, mais le métier manquait de stabilité et me pesait mentalement, alors j’ai choisi d’arrêter.',
     ],
     links: [],
   },
   {
     id: 'musique', node: 'St_musique', group: 'Passion',
-    title: 'Musique', // TODO
-    hover: 'Une platine vinyle. Le son qui accompagne le code. (TODO)', // TODO
+    title: 'Musique',
+    hover: 'Une platine vinyle. Elle ne s’arrête jamais vraiment.',
     text: [
-      'TODO : ce que tu écoutes quand tu travailles ou que tu révises.',
-      'TODO : une anecdote sur les vinyles de ton bureau.',
+      'La musique m’accompagne du réveil jusqu’au coucher, c’est une de mes plus grandes passions.',
+      'Quand je travaille, elle m’aide à me concentrer : je suis bien plus productif avec de la musique dans les oreilles que sans.',
     ],
     links: [],
   },
   {
     id: 'jeux', node: 'St_jeux', group: 'Passion',
-    title: 'Jeux vidéo', // TODO
-    hover: 'Une console et une manette. Pour la recherche de bugs, évidemment. (TODO)', // TODO
+    title: 'Jeux vidéo',
+    hover: 'Une console et une manette. Encore une partie ?',
     text: [
-      'TODO : tes jeux préférés et ce qu’ils t’ont donné envie d’apprendre.',
-      'TODO : lien avec ton projet Unity.',
+      'Je suis de la génération Z, j’ai grandi avec les jeux vidéo. Je passais mes soirées avec les plus grands de ma famille, à jouer avec eux ou juste à les regarder.',
+      'J’y ai fait mes plus belles rencontres. Je leur en suis reconnaissant, et ils gardent une petite place dans mon cœur.',
     ],
     links: [],
   },
   {
     id: 'voyages', node: 'St_voyages', group: 'Passion',
-    title: 'Voyages', // TODO
-    hover: 'Un avion miniature. Destination : la frontière suisse. (TODO)', // TODO
+    title: 'Voyages',
+    hover: 'Un avion miniature. Destination : ailleurs.',
     text: [
-      'TODO : un voyage qui t’a marqué.',
-      'TODO : pourquoi voyager et travailler près d’une frontière te plaît.',
+      'C’est là que je me sens le plus libre : arriver dans un endroit inconnu, loin de tout le monde, sans connaître personne, et explorer.',
+      'J’en profite pour découvrir la culture, rencontrer des gens et décompresser. Ça me rappelle qu’on se met beaucoup trop de pression, moi le premier.',
     ],
+    // Album : ajouter les photos dans public/images/voyages/ puis une ligne par photo, par exemple
+    // (les 4 premières s'affichent aussi dans l'album posé sur le socle, format paysage conseillé)
+    // { src: 'images/voyages/istanbul.jpg', place: 'Istanbul, Turquie' },
+    album: [],
     links: [],
   },
   {
     id: 'weplay', node: 'St_weplay', group: 'Parcours',
-    title: 'WePlayForCharity', // TODO
-    hover: 'Une photo sur son chevalet. L’image qui compte. (TODO)', // TODO
-    stat: '69 685 € récoltés sur la dernière édition', // chiffre donné, pas de total général
+    title: 'WePlayForCharity',
+    hover: '72 heures de stream pour la bonne cause.',
+    stat: '130 k€ récoltés en 3 éditions',
+    photo: 'images/weplayforcharity.jpg',
     text: [
-      'TODO : explique ce qu’est WePlayForCharity et ton rôle.',
-      'TODO : ce que tu y as appris (organisation, technique, équipe).',
+      'J’ai monté WePlayForCharity en 2023, à 17 ans, avec l’association Human Appeal. Le principe : réunir plusieurs créateurs de contenu pendant trois jours et streamer 72 heures sans interruption pour récolter un maximum de fonds, principalement pour la Palestine.',
+      'J’en suis le fondateur principal et je dirigeais ma propre équipe. Sur un événement de cette taille, je n’avais pas le droit à l’erreur.',
+      'Les dons de 2023 ont financé des puits, ceux de 2024 des habitations et des vêtements. En 2025, ils ont permis de distribuer 7 766 repas à Gaza.',
     ],
-    links: [], // TODO : { label: 'Voir le site', href: 'https://…' }
+    links: [], // plus tard : { label: 'Le site de l’événement', href: 'https://…' }
   },
   {
     id: 'reseau', node: 'St_reseau', group: 'Parcours', project: 'reseau',
-    title: 'Réseau', // TODO
-    hover: 'Un switch, un routeur et des câbles bleus. Tout est branché, promis. (TODO)', // TODO
+    title: 'Réseau',
+    hover: 'Un switch, un routeur et des câbles bleus. Tout est branché, promis.',
     text: [
-      'TODO : ce que tu sais faire en réseau (adressage IP, routage, DHCP, DNS).',
-      'TODO : tes labs Cisco Packet Tracer.',
+      'J’ai découvert le réseau en deuxième année de BUT MMI, parcours développement web, avec mes premières bases sur Cisco Packet Tracer.',
+      'J’ai ensuite suivi un cours OpenClassrooms et continué seul avec des vidéos. Je n’ai pas fini d’apprendre.',
     ],
     links: [],
   },
   {
     id: 'linux', node: 'St_linux', group: 'Parcours', project: 'linux',
-    title: 'Linux', // TODO
-    hover: 'Une baie serveur. Les LED clignotent, donc tout va bien. (TODO)', // TODO
+    title: 'Linux',
+    hover: 'Une baie serveur. Les LED clignotent, donc tout va bien.',
     text: [
-      'TODO : tes serveurs Ubuntu et ce que tu y héberges.',
-      'TODO : SSH, MariaDB, administration au quotidien.',
+      'Au lycée, c’est moi qui ouvrais les serveurs de jeux multijoueur pour mes amis. Je faisais déjà du Linux et de l’Ubuntu sans vraiment m’en rendre compte.',
+      'Cette année, avec Bandit d’OverTheWire, j’ai compris que j’avais plus que les bases. Je sais monter un environnement avec MariaDB, sécuriser la base de données et tout administrer à distance en SSH.',
     ],
     links: [],
   },
   {
     id: 'trophees', node: 'St_trophees', group: 'Parcours',
-    title: 'Trophées', // TODO
-    hover: 'Une vitrine. Les coupes dorées sont gagnées, les autres arrivent. (TODO)', // TODO
+    title: 'Trophées',
+    hover: 'Une vitrine. Les coupes dorées sont gagnées, les autres arrivent.',
     text: [
-      'Les coupes dorées sont débloquées, les autres sont verrouillées. Elles viennent de la liste TROPHIES.',
-      'TODO : une phrase sur ta façon de progresser (Bandit, TryHackMe, Root-Me…).',
+      'Chaque coupe correspond à une étape de mon apprentissage en cybersécurité. Les dorées sont validées, les autres sont celles que je vise ensuite.',
+      'La dernière de la liste reste la plus importante : l’alternance signée.',
     ],
     links: [],
   },
   {
-    id: 'suisse', node: 'Door', group: 'Objectif',
-    title: 'Direction la Suisse', // TODO
-    hover: 'Une porte entrouverte. La lumière vient de l’autre côté. (TODO)', // TODO
+    id: 'alternance', node: 'Door', group: 'Prochaine étape',
+    title: 'Et si la suite, c’était chez vous ?',
+    hover: 'Une porte entrouverte. Derrière, mon alternance.',
+    stat: 'Disponible en alternance dès janvier 2027',
     text: [
-      'Mon objectif : une alternance en support IT, systèmes ou réseaux, à la frontière suisse.',
-      'TODO : précise la région, la date de début (janvier 2027) et ce que tu cherches.',
+      'Je cherche une alternance en support informatique, systèmes ou réseaux, en Île-de-France, pendant mon Bachelor Cybersécurité à l’ESGI Paris.',
+      'Le rythme : 3 semaines en entreprise, 1 semaine à l’école. Mon CV et mes contacts sont juste en dessous.',
     ],
-    links: [], // TODO : { label: 'Me contacter', href: 'mailto:…' }
+    links: [
+      { label: 'Mon CV', href: './CV_Arda_Nigiz.pdf' },
+      { label: 'M’écrire', href: 'mailto:bryanigizarda@gmail.com' },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/arda-nigiz-5984052a9/' },
+    ],
   },
 ]
