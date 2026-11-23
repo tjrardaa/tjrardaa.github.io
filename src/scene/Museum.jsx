@@ -86,10 +86,12 @@ export default function Museum({ night, selected, onHover, onSelect, onReady }) 
   const [albumTex, setAlbumTex] = useState([])
   useEffect(() => {
     let alive = true
+    const loaded = []
     const loader = new THREE.TextureLoader()
     ALBUM.forEach((a, i) => {
       loader.load(`${BASE}${a.src}`, (tex) => {
-        if (!alive) return
+        if (!alive) { tex.dispose(); return }
+        loaded.push(tex)
         tex.flipY = false
         tex.colorSpace = THREE.SRGBColorSpace
         tex.channel = 1
@@ -97,7 +99,7 @@ export default function Museum({ night, selected, onHover, onSelect, onReady }) 
         setAlbumTex((prev) => { const next = [...prev]; next[i] = tex; return next })
       }, undefined, () => {})
     })
-    return () => { alive = false }
+    return () => { alive = false; loaded.forEach((tex) => tex.dispose()) }
   }, [])
 
   // trophées : doré si obtenu (TROPHIES), sombre avec un cadenas sinon

@@ -65,17 +65,26 @@ export function TourBar({ stop, mobile, night, onPrev, onNext, onDesk, onQuit })
   // balayage gauche / droite sur téléphone
   useEffect(() => {
     if (!mobile) return
-    let x0 = null
-    const down = (e) => { x0 = e.touches[0].clientX }
+    let start = null
+    const down = (e) => {
+      if (e.touches.length !== 1) { start = null; return }
+      const touch = e.touches[0]
+      start = { id: touch.identifier, x: touch.clientX, y: touch.clientY }
+    }
+    const cancel = () => { start = null }
     const up = (e) => {
-      if (x0 === null) return
-      const dx = e.changedTouches[0].clientX - x0
-      x0 = null
-      if (Math.abs(dx) > 60) (dx < 0 ? onNext : onPrev)()
+      if (!start) return
+      const touch = Array.from(e.changedTouches).find((t) => t.identifier === start.id)
+      if (!touch) return
+      const dx = touch.clientX - start.x
+      const dy = touch.clientY - start.y
+      start = null
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) (dx < 0 ? onNext : onPrev)()
     }
     window.addEventListener('touchstart', down, { passive: true })
     window.addEventListener('touchend', up, { passive: true })
-    return () => { window.removeEventListener('touchstart', down); window.removeEventListener('touchend', up) }
+    window.addEventListener('touchcancel', cancel, { passive: true })
+    return () => { window.removeEventListener('touchstart', down); window.removeEventListener('touchend', up); window.removeEventListener('touchcancel', cancel) }
   }, [mobile, onNext, onPrev])
   return (
     <nav aria-label="Visite guidée" className={`fixed z-40 bottom-4 inset-x-3 mx-auto w-fit max-w-full flex items-center gap-2 rounded-full px-2 py-2 shadow-xl backdrop-blur ${bar}`}>

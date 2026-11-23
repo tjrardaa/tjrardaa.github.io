@@ -152,7 +152,7 @@ export default function App() {
 
       {view === 'room' && <MuseumCard stop={stop} mobile={mobile} night={night} tour={tour} onClose={closeStop} onProject={openProject} />}
       {tour && stop !== null && view === 'room' && (
-        <TourBar stop={stop} mobile={mobile} night={night} onPrev={prev} onNext={next} onDesk={closeStop} onQuit={closeStop} />
+        <TourBar stop={stop} mobile={mobile} night={night} onPrev={prev} onNext={next} onDesk={() => { closeStop(); setView('screen') }} onQuit={closeStop} />
       )}
 
       {recruiter && <Recruiter onClose={closeRecruiter} night={night} />}
