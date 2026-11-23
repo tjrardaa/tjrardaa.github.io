@@ -155,6 +155,7 @@ export const MUSEUM = [
       'J’en profite pour découvrir la culture, rencontrer des gens et décompresser. Ça me rappelle qu’on se met beaucoup trop de pression, moi le premier.',
     ],
     // Album : ajouter les photos dans public/images/voyages/ puis une ligne par photo, par exemple
+    // (les 4 premières s'affichent aussi dans l'album posé sur le socle, format paysage conseillé)
     // { src: 'images/voyages/istanbul.jpg', place: 'Istanbul, Turquie' },
     album: [],
     links: [],

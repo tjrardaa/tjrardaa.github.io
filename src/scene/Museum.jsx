@@ -8,9 +8,11 @@ import { MUSEUM, TROPHIES } from '../data'
 // l'écran START n'attend que le bureau. Même méthode que le bureau : lumière cuite, jour dans le .glb, nuit à part.
 const BASE = import.meta.env.BASE_URL
 export const MUSEUM_URL = `${BASE}models/musee.glb`
-const ATLAS = ['M1', 'M2', 'M3', 'M4']
+const ATLAS = ['M1', 'M2', 'M3', 'M4', 'M5']
 const NIGHT_URLS = ATLAS.map((a) => `${BASE}models/museum-night/${a}.webp`)
 const PHOTO_URL = `${BASE}images/weplayforcharity.jpg`
+// album du socle Voyages : les 4 premières photos de l'album (data.js) remplacent les photos d'exemple
+const ALBUM = (MUSEUM.find((e) => e.id === 'voyages')?.album ?? []).slice(0, 4)
 
 function Piece({ entry, index, node, mat, night, selected, onHover, onSelect }) {
   const [over, setOver] = useState(false)
@@ -64,8 +66,39 @@ export default function Museum({ night, selected, onHover, onSelect, onReady }) 
     floor.raycast = () => {}
     nodes.Vitrine_glass.material = new THREE.MeshBasicMaterial({ color: '#dff1ff', transparent: true, opacity: 0.12, depthWrite: false, toneMapped: false })
     nodes.Vitrine_glass.raycast = () => {}
-    return { list, bases, pieceMat }
+    // plaques des socles et album : cuits dans l'atlas M5, on clique « à travers » (le socle derrière reçoit le clic)
+    for (const n of ['Cartels', 'Album']) {
+      nodes[n].material = make('M5', false)
+      nodes[n].raycast = () => {}
+    }
+    const albumMats = [0, 1, 2, 3].map((i) => {
+      const o = nodes[`AlbumPhoto_${i}`]
+      o.raycast = () => {}
+      o.material = make('M5', false)
+      // la page de l'album passe légèrement au-dessus : on pose la photo dessus (une seule fois, le .glb est en cache)
+      if (!o.userData.lifted) { o.position.y += 0.003; o.userData.lifted = true }
+      return o.material
+    })
+    return { list, bases, pieceMat, albumMats }
   }, [nodes, materials, nightTex])
+
+  // vraies photos de voyage dans l'album (2e jeu d'UV du maillage), sinon on garde les photos d'exemple cuites
+  const [albumTex, setAlbumTex] = useState([])
+  useEffect(() => {
+    let alive = true
+    const loader = new THREE.TextureLoader()
+    ALBUM.forEach((a, i) => {
+      loader.load(`${BASE}${a.src}`, (tex) => {
+        if (!alive) return
+        tex.flipY = false
+        tex.colorSpace = THREE.SRGBColorSpace
+        tex.channel = 1
+        tex.anisotropy = 8
+        setAlbumTex((prev) => { const next = [...prev]; next[i] = tex; return next })
+      }, undefined, () => {})
+    })
+    return () => { alive = false }
+  }, [])
 
   // trophées : doré si obtenu (TROPHIES), sombre avec un cadenas sinon
   const trophies = useMemo(() => {
@@ -125,10 +158,15 @@ export default function Museum({ night, selected, onHover, onSelect, onReady }) 
   useEffect(() => { sign.color.setScalar(night ? 0.55 : 1) }, [night, sign])
 
   useEffect(() => { onReady?.() }, [onReady])
-
   // jour / nuit
   useEffect(() => {
     mats.list.forEach(({ m, atlas }) => { m.map = night ? mats.bases[atlas].night : mats.bases[atlas].day; m.needsUpdate = true })
+    mats.albumMats.forEach((m, i) => {
+      if (!albumTex[i]) return
+      m.map = albumTex[i]
+      m.color.setScalar(night ? 0.85 : 0.95)
+      m.needsUpdate = true
+    })
     trophies.forEach(({ i, m, p }) => {
       const got = !!TROPHIES[i]?.got
       if (got) m.color.setRGB(night ? 2.0 : 1.0, night ? 1.4 : 0.76, night ? 0.45 : 0.2)
@@ -137,7 +175,7 @@ export default function Museum({ night, selected, onHover, onSelect, onReady }) 
     })
     if (!photo.map) photo.color.set(night ? '#3a3b3e' : '#8b8d92')
     else photo.color.setScalar(night ? 0.85 : 1)
-  }, [night, mats, trophies, photo])
+  }, [night, mats, trophies, photo, albumTex])
 
   return (
     <group>
@@ -150,6 +188,9 @@ export default function Museum({ night, selected, onHover, onSelect, onReady }) 
       {trophies.filter((t) => t.p).map(({ i }) => <primitive key={`p${i}`} object={nodes[`Padlock_${i}`]} />)}
       <primitive object={nodes.Photo} />
       <primitive object={nodes.Vitrine_glass} />
+      <primitive object={nodes.Cartels} />
+      <primitive object={nodes.Album} />
+      {[0, 1, 2, 3].map((i) => <primitive key={`a${i}`} object={nodes[`AlbumPhoto_${i}`]} />)}
       <mesh position={[0.04, 2.38, -6.835]} material={sign} raycast={() => null}>
         <planeGeometry args={[1.04, 0.26]} />
       </mesh>
